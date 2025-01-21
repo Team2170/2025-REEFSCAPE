@@ -7,8 +7,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
-import frc.robot.LimelightHelpers.LimelightResults;
-import frc.robot.LimelightHelpers.PoseEstimate;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -1185,17 +1183,7 @@ public class LimelightHelpers {
         double[] poseArray = getLimelightNTDoubleArray(limelightName, "camerapose_targetspace");
         return toPose3D(poseArray);
     }
-
-    /**
-     * Gets the target's 3D pose with respect to the camera's coordinate system.
-     * @param limelightName Name/identifier of the Limelight
-     * @return Pose3d object representing the target's position and orientation relative to the camera
-     */
-    public static Pose3d getTargetPose3d_CameraSpace(String limelightName) {
-        double[] poseArray = getLimelightNTDoubleArray(limelightName, "targetpose_cameraspace");
-        return toPose3D(poseArray);
-    }
-
+    
     /**
      * Gets the target's 3D pose with respect to the robot's coordinate system.
      * @param limelightName Name/identifier of the Limelight
