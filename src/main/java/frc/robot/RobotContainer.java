@@ -92,8 +92,8 @@ public class RobotContainer {
                 * Names must match what is in PathPlanner
                 * Please give descriptive names
                 */
-                PIDConstants tranPid = new PIDConstants(10, 0, 0);// PID constants for translation            
-                PIDConstants rotPid = new PIDConstants(7, 0, 0);// PID constants for rotation
+                PIDConstants tranPid = new PIDConstants(0.1, 0, 0);// PID constants for translation            
+                PIDConstants rotPid = new PIDConstants(0.1, 0, 0);// PID constants for rotation
                 s_Swerve = s_Swerve.withPathPlanner(field, tranPid, rotPid);
                 // Configure AutoBuilder last
                 autoChooser.addDefaultOption("Do Nothing", Commands.none());
