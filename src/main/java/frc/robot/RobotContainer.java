@@ -4,26 +4,26 @@
 
 package frc.robot;
 
-import java.util.function.DoubleSupplier;
+import java.util.List;
+import java.util.Optional;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
 import BobcatLib.Hardware.Controllers.OI;
-import BobcatLib.Subsystems.Swerve.SimpleSwerve.SwerveDrive;
-import BobcatLib.Subsystems.Swerve.SimpleSwerve.Commands.ControlledSwerve;
-import BobcatLib.Subsystems.Swerve.SimpleSwerve.Commands.TeleopSwerve;
+import BobcatLib.Subsystems.Swerve.SimpleSwerve.Containers.SwerveWithVision;
 import BobcatLib.Subsystems.Swerve.SimpleSwerve.Swerve.Module.Utility.PIDConstants;
-import edu.wpi.first.math.geometry.Translation2d;
+import BobcatLib.Subsystems.Swerve.SimpleSwerve.Utility.Alliance;
+import BobcatLib.Subsystems.Swerve.Utility.LoadablePathPlannerAuto;
+import BobcatLib.Subsystems.Vision.Components.VisionIO.target;
+import BobcatLib.Subsystems.Vision.Limelight.LimeLightConfig;
+import BobcatLib.Subsystems.Vision.Limelight.LimelightCamera;
+import BobcatLib.Subsystems.Vision.Limelight.Estimator.PoseEstimate;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -34,72 +34,35 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
  * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer {
+public class RobotContainer extends SwerveWithVision{
         /* Subsystems */
-        public final OI s_Controls;
-        public SwerveDrive s_Swerve;
         private final LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>("Auto Routine"); // Choose an Auto!
-        private final Field2d field;
-        private final String robotName;
-        
+
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
-        public RobotContainer(String robotName) {
-                this.robotName = robotName;
-                s_Swerve = new SwerveDrive(this.robotName, Robot.isSimulation(), Robot.alliance); // This is the Swerve Library implementation.
-                s_Controls = new OI(); // Interfaces with popular controllers and input devices
-                // SmartDashboard.putNumber("SpeedLimit", 1);
-                initComand();
-                // Register Named Commands
-                // NamedCommands.registerCommand("someOtherCommand", new PathPlannerAuto("leaveBase Path"));                        
-                field = new Field2d();
-                SmartDashboard.putData("Field", field);
-                // Configure AutoBuilder last
-                configureAutos();
-                // Configure the button bindings
-                configureButtonBindings();
-        }
-        
-        public void initComand() {
-                DoubleSupplier translation = () -> s_Controls.getTranslationValue();
-                DoubleSupplier strafe = () -> s_Controls.getStrafeValue();
-                if (!Robot.alliance.isBlueAlliance()) {
-                        translation = () -> -s_Controls.getTranslationValue();
-                        strafe = () -> -s_Controls.getStrafeValue();
+        public RobotContainer(OI driver_controller,
+                        List<LoadablePathPlannerAuto> autos,
+                        String robotName,
+                        boolean isSim,
+                        Alliance alliance,
+                        PIDConstants tranPidPathPlanner,
+                        PIDConstants rotPidPathPlanner,
+                        String VisionName,
+                        List<target> targets,
+                        LimeLightConfig ll_cfg) {
+
+                super(driver_controller, autos, robotName,
+                isSim, alliance, tranPidPathPlanner, 
+                rotPidPathPlanner, VisionName, targets, ll_cfg);
+
+                try {
+                        LimelightCamera limelight = new LimelightCamera(VisionName);
+                        Optional<PoseEstimate> visionEstimate = limelight.getPoseEstimator(true).getPoseEstimate();
+                        visionEstimate.get();
+                } catch (Exception e) {
+                        SmartDashboard.putString("B", "3");
                 }
-                s_Swerve.setDefaultCommand(
-                                new TeleopSwerve(
-                                                s_Swerve,
-                                                translation,
-                                                strafe,
-                                                () -> s_Controls.getRotationValue(),
-                                                () -> s_Controls.robotCentric.getAsBoolean(),
-                                                s_Controls.controllerJson));
-        }
-        
-        public boolean autoChooserInitialized() {
-                return autoChooser.get() != null;
-        }
-                
-        /**
-         * this should only be called once DS and FMS are attached
-         */
-        public void configureAutos() {
-                /*
-                * Auto Chooser
-                * 
-                * Names must match what is in PathPlanner
-                * Please give descriptive names
-                */
-                PIDConstants tranPid = new PIDConstants(0.1, 0, 0);// PID constants for translation            
-                PIDConstants rotPid = new PIDConstants(0.1, 0, 0);// PID constants for rotation
-                s_Swerve = s_Swerve.withPathPlanner(field, tranPid, rotPid);
-                // Configure AutoBuilder last
-                autoChooser.addDefaultOption("Do Nothing", Commands.none());
-                autoChooser.addOption("Base", new PathPlannerAuto("Base"));
-                autoChooser.addOption("Auto1", new PathPlannerAuto("Auto1"));
-                autoChooser.addOption("DriveToReef-HP1", new PathPlannerAuto("DriveToReef-HP1"));
         }
 
         /**
@@ -110,20 +73,13 @@ public class RobotContainer {
          * it to a {@link
          * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
          */
-        private void configureButtonBindings() {
-                Command zeroGyro = Commands.runOnce(s_Swerve::zeroHeading);
-                /* Driver Buttons */
-                s_Controls.zeroGyro.onTrue(zeroGyro);
-                // Cardinal Modes
-                double maxSpeed = s_Swerve.jsonSwerve.chassisSpeedLimits.maxSpeed;
-                Command strafeBack = s_Swerve.driveAsCommand(new Translation2d(-1, 0).times(maxSpeed)).repeatedly();
-                Command strafeForward = s_Swerve.driveAsCommand(new Translation2d(1, 0).times(maxSpeed)).repeatedly();
-                Command strafeLeft = s_Swerve.driveAsCommand(new Translation2d(0, 1).times(maxSpeed)).repeatedly();
-                Command strafeRight = s_Swerve.driveAsCommand(new Translation2d(0, -1).times(maxSpeed)).repeatedly();
-                s_Controls.dpadForwardBtn.whileTrue(strafeForward);
-                s_Controls.dpadBackBtn.whileTrue(strafeBack);
-                s_Controls.dpadRightBtn.whileTrue(strafeRight);
-                s_Controls.dpadLeftBtn.whileTrue(strafeLeft);
+        @Override
+        public void configureButtonBindings() {
+                super.configureButtonBindings();
+
+                Command XButton = super.s_Swerve.driveToPose(new Pose2d(10, 5, Rotation2d.fromDegrees(180)));
+
+                super.s_Controls.single_controller.getXorSquare().whileTrue(XButton);
         }
 
         /**
@@ -131,12 +87,12 @@ public class RobotContainer {
          *
          * @return the command to run in autonomous
          */
-        public Command getAutonomousCommand() {
+        @Override
+        public Command getAutonomousCommand(String name) {
                 // This method loads the auto when it is called, however, it is recommended
                 // to first load your paths/autos when code starts, then return the
                 // pre-loaded auto/path
-                String name = autoChooser.get().getName();
-                return new PathPlannerAuto(name);
+                return super.getAutonomousCommand(name);
         }
 
         /**
@@ -147,22 +103,12 @@ public class RobotContainer {
          *
          * @return the command to run in autonomous
          */
+        @Override
         public Command getTestCommand() {
-                Command testSwerveForward = new ControlledSwerve(
-                                s_Swerve, 0.2, 0.0, 0.0, false, s_Controls.controllerJson).withTimeout(3);
-                Command testSwerveRight = new ControlledSwerve(
-                                s_Swerve, 0.0, 0.2, 0.0, false, s_Controls.controllerJson).withTimeout(3);
-                Command testSwerveBackwards = new ControlledSwerve(
-                                s_Swerve, -0.2, 0.0, 0.0, false, s_Controls.controllerJson).withTimeout(3);
-                Command testSwerveLeft = new ControlledSwerve(
-                                s_Swerve, 0.0, -0.2, 0.0, false, s_Controls.controllerJson).withTimeout(3);
-                Command testRIPCW = new ControlledSwerve(s_Swerve, 0.0, 0.0, 0.2, false, s_Controls.controllerJson)
-                                .withTimeout(3);
-                Command testRIPCCW = new ControlledSwerve(s_Swerve, 0.0, 0.0, -0.2, false, s_Controls.controllerJson)
-                                .withTimeout(3);
-                Command stopMotorsCmd = new InstantCommand(() -> s_Swerve.stopMotors());
-                Command testCommand = testSwerveForward.andThen(testSwerveRight).andThen(testSwerveBackwards)
-                                .andThen(testSwerveLeft).andThen(testRIPCW).andThen(testRIPCCW).andThen(stopMotorsCmd);
-                return testCommand;
+                return super.getTestCommand();
+        }
+
+        public void updatePaths(List<LoadablePathPlannerAuto> autos){
+                super.updateLoadedPaths(autos);
         }
 }
