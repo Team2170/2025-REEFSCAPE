@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="frc.LoadModuleConfiguration_test" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-02-04T22:54:03" hostname="DESKTOP-S65OCKP" time="1.364">
-  <properties/>
-  <testcase name="loadAndTestAll_Modules()" classname="frc.LoadModuleConfiguration_test" time="1.364"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

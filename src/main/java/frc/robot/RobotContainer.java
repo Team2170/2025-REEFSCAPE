@@ -5,25 +5,15 @@
 package frc.robot;
 
 import java.util.List;
-import java.util.Optional;
-
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import BobcatLib.Hardware.Controllers.OI;
-import BobcatLib.Subsystems.Swerve.SimpleSwerve.Containers.SwerveWithVision;
+import BobcatLib.Subsystems.Swerve.SimpleSwerve.Containers.SwerveBase;
 import BobcatLib.Subsystems.Swerve.SimpleSwerve.Swerve.Module.Utility.PIDConstants;
 import BobcatLib.Subsystems.Swerve.SimpleSwerve.Utility.Alliance;
 import BobcatLib.Subsystems.Swerve.Utility.LoadablePathPlannerAuto;
-import BobcatLib.Subsystems.Vision.Components.VisionIO.target;
-import BobcatLib.Subsystems.Vision.Limelight.LimeLightConfig;
-import BobcatLib.Subsystems.Vision.Limelight.LimelightCamera;
-import BobcatLib.Subsystems.Vision.Limelight.Estimator.PoseEstimate;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -34,9 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
  * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer extends SwerveWithVision{
-        /* Subsystems */
-        private final LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>("Auto Routine"); // Choose an Auto!
+public class RobotContainer extends SwerveBase {
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -47,22 +35,13 @@ public class RobotContainer extends SwerveWithVision{
                         boolean isSim,
                         Alliance alliance,
                         PIDConstants tranPidPathPlanner,
-                        PIDConstants rotPidPathPlanner,
-                        String VisionName,
-                        List<target> targets,
-                        LimeLightConfig ll_cfg) {
+                        PIDConstants rotPidPathPlanner) {
 
-                super(driver_controller, autos, robotName,
-                isSim, alliance, tranPidPathPlanner, 
-                rotPidPathPlanner, VisionName, targets, ll_cfg);
+                super(driver_controller, autos, robotName, isSim, alliance, tranPidPathPlanner, rotPidPathPlanner);
+        }
 
-                try {
-                        LimelightCamera limelight = new LimelightCamera(VisionName);
-                        Optional<PoseEstimate> visionEstimate = limelight.getPoseEstimator(true).getPoseEstimate();
-                        visionEstimate.get();
-                } catch (Exception e) {
-                        SmartDashboard.putString("B", "3");
-                }
+        public void periodic() {
+                s_Swerve.periodic();
         }
 
         /**
@@ -76,10 +55,6 @@ public class RobotContainer extends SwerveWithVision{
         @Override
         public void configureButtonBindings() {
                 super.configureButtonBindings();
-
-                Command XButton = super.s_Swerve.driveToPose(new Pose2d(10, 5, Rotation2d.fromDegrees(180)));
-
-                super.s_Controls.single_controller.getXorSquare().whileTrue(XButton);
         }
 
         /**
@@ -106,9 +81,5 @@ public class RobotContainer extends SwerveWithVision{
         @Override
         public Command getTestCommand() {
                 return super.getTestCommand();
-        }
-
-        public void updatePaths(List<LoadablePathPlannerAuto> autos){
-                super.updateLoadedPaths(autos);
         }
 }

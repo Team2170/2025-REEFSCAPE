@@ -8,16 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 
+import BobcatLib.BobcatLibCoreRobot;
 import BobcatLib.Hardware.Controllers.OI;
 import BobcatLib.Subsystems.Swerve.SimpleSwerve.Swerve.Module.Utility.PIDConstants;
 import BobcatLib.Subsystems.Swerve.SimpleSwerve.Utility.Alliance;
 import BobcatLib.Subsystems.Swerve.Utility.LoadablePathPlannerAuto;
-import BobcatLib.Subsystems.Vision.Components.VisionIO.target;
-import BobcatLib.Subsystems.Vision.Limelight.LimeLightConfig;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -26,9 +23,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
  * the TimedRobot documentation. If you change the name of this class or the package after creating
  * this project, you must also update the Main.java file in the project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends BobcatLibCoreRobot {
   private Command m_autonomousCommand;
-  private OI driver_controller = new OI("2023_Robot");
+  private OI driver_controller;
   public static Alliance alliance;
 
   private final RobotContainer m_robotContainer;
@@ -38,6 +35,7 @@ public class Robot extends TimedRobot {
    * initialization code.
    */
   public Robot() {
+    super(RobotBase.isReal());
       
     alliance = new Alliance();
     
@@ -47,32 +45,19 @@ public class Robot extends TimedRobot {
     List<LoadablePathPlannerAuto> loadableAutos = new ArrayList<LoadablePathPlannerAuto>();
     loadableAutos.add(new LoadablePathPlannerAuto("Do Nothing", Commands.none(), true));
 
-    String robotName = "2023_Robot";
+    String robotName = "RobotName";
     boolean isSim = false;
-    PIDConstants tranPidPathPlanner = new PIDConstants(10, kDefaultPeriod, kDefaultPeriod);
-    PIDConstants rotPidPathPlanner = new PIDConstants(5, kDefaultPeriod, kDefaultPeriod);
-    String VisionName = "LimelightVision";
-
-    List<target> targets = new ArrayList<target>();
-    target algae = new target();
-    algae.name = "algae";
-    targets.add( algae);
-    target coral = new target();
-    algae.name = "coral";
-    targets.add( coral);
-    LimeLightConfig ll_cfg = new LimeLightConfig();
-    ll_cfg.tagAmbiguity = 0.3;
-    ll_cfg.tagDistanceLimit = 4;
+    PIDConstants tranPidPathPlanner = new PIDConstants(10, 0, 0);
+    PIDConstants rotPidPathPlanner = new PIDConstants(5, 0, 0);
+    driver_controller = new OI(robotName);
     m_robotContainer = new RobotContainer(driver_controller, loadableAutos, robotName,
     isSim, alliance, tranPidPathPlanner,
-    rotPidPathPlanner, VisionName, targets,
-    ll_cfg);
+    rotPidPathPlanner);
 
-    
-    loadableAutos.add(new LoadablePathPlannerAuto("Base", new PathPlannerAuto("Base"), false));
-    loadableAutos.add(new LoadablePathPlannerAuto("Auto1", new PathPlannerAuto("Auto1"), false));
+    loadableAutos.add(new LoadablePathPlannerAuto("Base", new PathPlannerAuto("Base").withName("Base"), false));
+    loadableAutos.add(new LoadablePathPlannerAuto("Auto1", new PathPlannerAuto("Auto1").withName("Auto1"), false));
+    m_robotContainer.updateLoadedPaths(loadableAutos);
 
-    m_robotContainer.updatePaths(loadableAutos);
   }
 
   /**
@@ -89,8 +74,6 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-
-    m_robotContainer.periodic();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -103,7 +86,11 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    String name = "Base";
+    String name  = "";
+    name = m_robotContainer.getAutoChooser().getSendableChooser().getSelected();
+    if( name == "" || name == null){
+      name  = m_robotContainer.getAutoChooser().get().getName();
+    }
     m_autonomousCommand = m_robotContainer.getAutonomousCommand(name);
 
     // schedule the autonomous command (example)

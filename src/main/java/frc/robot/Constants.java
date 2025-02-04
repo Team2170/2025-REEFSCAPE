@@ -13,13 +13,4 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  /**
-   * Example of an inner class. One can "import static [...].Constants.OIConstants.*" to gain access
-   * to the constants contained within without having to preface the names with the class, greatly
-   * reducing the amount of text required.
-   */
-  public static final class OIConstants {
-    // Example: the port of the driver's controller
-    public static final int kDriverControllerPort = 0;
-  }
 }

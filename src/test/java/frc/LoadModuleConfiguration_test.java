@@ -1,4 +1,4 @@
-package frc;
+package frc.robot;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -8,9 +8,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import BobcatLib.Subsystems.Swerve.Utility.CotsModuleSwerveConstants;
-import BobcatLib.Subsystems.Swerve.Utility.UnifiedModuleConfigurator.CotsModuleObject;
 import BobcatLib.Subsystems.Swerve.Utility.*;
+import BobcatLib.Subsystems.Swerve.Utility.UnifiedModuleConfigurator.CotsModuleObject;
 
 public class LoadModuleConfiguration_test {
     /**
@@ -37,6 +36,31 @@ public class LoadModuleConfiguration_test {
                     for (String module_element : moduleTypes) {
                         CotsModuleSwerveConstants cotsmodule = new CotsModuleObject()
                                 .withConfiguration("sds", module_element, motor_element, level_element).to();
+                        assertNotNull(cotsmodule.driveGearRatio);
+                    }
+                }
+            }
+
+            levels = new ArrayList<String>();
+            levels.add("X1_10");
+            levels.add("X1_11");
+            levels.add("X1_12");
+            levels.add("X2_10");
+            levels.add("X2_11");
+            levels.add("X2_12");
+            levels.add("X3_10");
+            levels.add("X3_11");
+            levels.add("X3_12");
+            levels.add("X4_10");
+            levels.add("X4_11");
+            levels.add("X4_12");
+            for (String level_element : levels) {
+                for (String motor_element : motorTypes) {
+                    moduleTypes = new ArrayList<String>();
+                    moduleTypes.add("SwerveX2i");
+                    for (String module_element : moduleTypes) {
+                        CotsModuleSwerveConstants cotsmodule = new CotsModuleObject()
+                                .withConfiguration("wcp", module_element, motor_element, level_element).to();
                         assertNotNull(cotsmodule.driveGearRatio);
                     }
                 }
