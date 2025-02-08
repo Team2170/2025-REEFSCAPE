@@ -4,13 +4,23 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 
+import BobcatLib.Hardware.Controllers.OI;
+import BobcatLib.Subsystems.Swerve.SimpleSwerve.Swerve.Module.Utility.PIDConstants;
 import BobcatLib.Subsystems.Swerve.SimpleSwerve.Utility.Alliance;
+import BobcatLib.Subsystems.Swerve.Utility.LoadablePathPlannerAuto;
+import BobcatLib.Subsystems.Vision.Components.VisionIO.target;
+import BobcatLib.Subsystems.Vision.Limelight.LimeLightConfig;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
  * the TimedRobot documentation. If you change the name of this class or the package after creating
@@ -18,7 +28,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  private OI driver_controller = new OI("2023_Robot");
   public static Alliance alliance;
+
   private final RobotContainer m_robotContainer;
 
   /**
@@ -26,11 +38,41 @@ public class Robot extends TimedRobot {
    * initialization code.
    */
   public Robot() {
+      
     alliance = new Alliance();
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    
+    // Instantiate our RobotContainer. This will perform all our button bindings,
+    // and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer("2023_Robot");
+    List<LoadablePathPlannerAuto> loadableAutos = new ArrayList<LoadablePathPlannerAuto>();
+    loadableAutos.add(new LoadablePathPlannerAuto("Do Nothing", Commands.none(), true));
 
+    String robotName = "2024-Robot";
+    boolean isSim = false;
+    PIDConstants tranPidPathPlanner = new PIDConstants(10, kDefaultPeriod, kDefaultPeriod);
+    PIDConstants rotPidPathPlanner = new PIDConstants(5, kDefaultPeriod, kDefaultPeriod);
+    String VisionName = "LimelightVision";
+
+    List<target> targets = new ArrayList<target>();
+    target algae = new target();
+    algae.name = "algae";
+    targets.add( algae);
+    target coral = new target();
+    algae.name = "coral";
+    targets.add( coral);
+    LimeLightConfig ll_cfg = new LimeLightConfig();
+    ll_cfg.tagAmbiguity = 0.3;
+    ll_cfg.tagDistanceLimit = 4;
+    m_robotContainer = new RobotContainer(driver_controller, loadableAutos, robotName,
+    isSim, alliance, tranPidPathPlanner,
+    rotPidPathPlanner, VisionName, targets,
+    ll_cfg);
+
+    
+    loadableAutos.add(new LoadablePathPlannerAuto("Base", new PathPlannerAuto("Base"), false));
+    loadableAutos.add(new LoadablePathPlannerAuto("Auto1", new PathPlannerAuto("Auto1"), false));
+
+    m_robotContainer.updatePaths(loadableAutos);
   }
 
   /**
@@ -47,6 +89,8 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    m_robotContainer.periodic();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -59,7 +103,8 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    String name = "Base";
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(name);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
