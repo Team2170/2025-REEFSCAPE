@@ -45,7 +45,7 @@ public class Robot extends BobcatLibCoreRobot {
     List<LoadablePathPlannerAuto> loadableAutos = new ArrayList<LoadablePathPlannerAuto>();
     loadableAutos.add(new LoadablePathPlannerAuto("Do Nothing", Commands.none(), true));
 
-    String robotName = "RobotName";
+    String robotName = "2024_Robot";
     boolean isSim = false;
     PIDConstants tranPidPathPlanner = new PIDConstants(10, 0, 0);
     PIDConstants rotPidPathPlanner = new PIDConstants(5, 0, 0);
@@ -53,6 +53,7 @@ public class Robot extends BobcatLibCoreRobot {
     m_robotContainer = new RobotContainer(driver_controller, loadableAutos, robotName,
     isSim, alliance, tranPidPathPlanner,
     rotPidPathPlanner);
+  //Praneeth is amazing lol he is literally the best kid
 
     loadableAutos.add(new LoadablePathPlannerAuto("Base", new PathPlannerAuto("Base").withName("Base"), false));
     loadableAutos.add(new LoadablePathPlannerAuto("Auto1", new PathPlannerAuto("Auto1").withName("Auto1"), false));
@@ -124,6 +125,8 @@ public class Robot extends BobcatLibCoreRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+
+    m_robotContainer.getTestCommand().schedule();
   }
 
   /** This function is called periodically during test mode. */
