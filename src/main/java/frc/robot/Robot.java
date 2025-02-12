@@ -45,7 +45,7 @@ public class Robot extends BobcatLibCoreRobot {
     List<LoadablePathPlannerAuto> loadableAutos = new ArrayList<LoadablePathPlannerAuto>();
     loadableAutos.add(new LoadablePathPlannerAuto("Do Nothing", Commands.none(), true));
 
-    String robotName = "2024_Robot";
+    String robotName = "2023_Robot";
     boolean isSim = false;
     PIDConstants tranPidPathPlanner = new PIDConstants(10, 0, 0);
     PIDConstants rotPidPathPlanner = new PIDConstants(5, 0, 0);
