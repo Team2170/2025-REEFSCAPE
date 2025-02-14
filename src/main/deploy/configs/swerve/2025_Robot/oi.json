@@ -1,6 +1,6 @@
 {
   "single": {
-    "type": "ruffy",
+    "type": "xbox",
     "id": 0,
     "deadband": 0.1
   },
@@ -9,5 +9,5 @@
     "id": 1,
     "deadband": 0.1
   },
-  "isDual": true
+  "isDual": false
 }

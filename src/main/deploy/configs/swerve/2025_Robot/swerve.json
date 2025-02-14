@@ -36,6 +36,6 @@
     "type": "CANdle",
     "id": 0,
     "ledCount": 8,
-    "canbus": "rio"
+    "canbus": "CANt_open_file"
   }
 }
