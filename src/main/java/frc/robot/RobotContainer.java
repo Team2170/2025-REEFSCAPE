@@ -15,9 +15,9 @@ import BobcatLib.Subsystems.Swerve.SimpleSwerve.Swerve.Module.Utility.PIDConstan
 import BobcatLib.Subsystems.Swerve.SimpleSwerve.Utility.Alliance;
 import BobcatLib.Subsystems.Swerve.Utility.LoadablePathPlannerAuto;
 import BobcatLib.Subsystems.Vision.Components.VisionIO.target;
-import BobcatLib.Subsystems.Vision.Limelight.LimeLightConfig;
-import BobcatLib.Subsystems.Vision.Limelight.LimelightCamera;
-import BobcatLib.Subsystems.Vision.Limelight.Estimator.PoseEstimate;
+import BobcatLib.Subsystems.Vision.Components.Utility.LimeLightConfig;
+import BobcatLib.Subsystems.Vision.limelight.Limelight;
+import BobcatLib.Subsystems.Vision.limelight.networktables.PoseEstimate;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -57,7 +57,7 @@ public class RobotContainer extends SwerveWithVision{
                 rotPidPathPlanner, VisionName, targets, ll_cfg);
 
                 try {
-                        LimelightCamera limelight = new LimelightCamera(VisionName);
+                        Limelight limelight = new Limelight(VisionName);
                         Optional<PoseEstimate> visionEstimate = limelight.getPoseEstimator(true).getPoseEstimate();
                         visionEstimate.get();
                 } catch (Exception e) {
@@ -79,7 +79,7 @@ public class RobotContainer extends SwerveWithVision{
 
                 Command XButton = super.s_Swerve.driveToPose(new Pose2d(10, 5, Rotation2d.fromDegrees(180)));
 
-                super.s_Controls.single_controller.getXorSquare().whileTrue(XButton);
+                super.s_Controls.first_controller.getXorSquare().onTrue(XButton);
         }
 
         /**
