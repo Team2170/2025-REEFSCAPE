@@ -4,9 +4,12 @@
 
 package frc.robot.Subsystems.Limelight;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.Subsystems.Limelight.LimelightHelpers.PoseEstimate;
 import frc.robot.Subsystems.Limelight.VisionObservation.LLTYPE;
 
 
@@ -39,13 +42,21 @@ public class VisionIOLimelight implements VisionIO {
     String llClass = LimelightHelpers.getNeuralClassID(name);
     inputs.tClass = llClass.isEmpty() ? 0 : Double.parseDouble(llClass);
     inputs.name = name;
-    inputs.botPoseMG2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name).pose;
-    inputs.tagCount = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name).tagCount;
-    inputs.avgTagDist = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name).avgTagDist;
+    inputs.botPoseMG2 = getBotPose().pose;
+    inputs.tagCount = getBotPose().tagCount;
+    inputs.avgTagDist = getBotPose().avgTagDist;
     inputs.botPose3d = LimelightHelpers.getBotPose3d_wpiBlue(name);
-    inputs.timestamp = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name).timestampSeconds;
+    inputs.timestamp = getBotPose().timestampSeconds;
     inputs.limelightType = limelightType;
   }
+  public PoseEstimate getBotPose(){
+    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+    if( estimate == null){
+      estimate = new PoseEstimate();
+    }
+    return estimate;
+  }
+
 
   @Override
   public void setLEDS(LEDMode mode) {

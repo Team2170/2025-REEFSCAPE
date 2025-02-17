@@ -22,6 +22,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Subsystems.Limelight.LimelightHelpers.PoseEstimate;
 import frc.robot.Subsystems.Limelight.VisionObservation.LLTYPE;
 
 public class Vision extends SubsystemBase {
@@ -104,8 +105,11 @@ public class Vision extends SubsystemBase {
     }
 
     if (inputs.name != "sim") {
-      LimelightHelpers.RawFiducial[] rawTrackedTags = LimelightHelpers
-          .getBotPoseEstimate_wpiBlue_MegaTag2(inputs.name).rawFiducials;
+      PoseEstimate estimate =  LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(inputs.name);
+      if( estimate == null){
+        estimate = new PoseEstimate();
+      }
+      LimelightHelpers.RawFiducial[] rawTrackedTags = estimate.rawFiducials;
       List<Integer> trackedTagID = new ArrayList<Integer>();
 
       for (int i = 0; i < rawTrackedTags.length; i++) {
@@ -169,14 +173,6 @@ public class Vision extends SubsystemBase {
         LimelightHelpers.getCameraPose_TargetSpace(inputs.name)[0],
         LimelightHelpers.getCameraPose_TargetSpace(inputs.name)[2]);
   }
-
-  /**
-   * tells the limelight what the rotation of the gyro is, for determining pose
-   * ambiguity stuff
-   */
-  // public void SetRobotOrientation(Rotation2d gyro) {
-  // io.setRobotOrientationMG2(gyro);
-  // }
 
   /**
    * @param tags anything NOT in here will be thrownOut
