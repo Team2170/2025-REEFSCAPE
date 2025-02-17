@@ -7,16 +7,13 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.Subsystems.Limelight.VisionObservation;
 import frc.robot.Subsystems.Limelight.VisionObservation.LLTYPE;
 import frc.robot.Subsystems.Limelight.limelightConstants;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotBase;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -42,6 +39,16 @@ public final class Constants {
     public static final double ANGLE_MAX_VELOCITY = 8.0;
     public static final double ANGLE_MAX_ACCELERATION = 20.0;
     public static final Distance ALIGN_DISTANCE = Meters.of(.4);
+    public static final double DRIVE_BASE_RADIUS = Math.max(
+        Math.max(
+            Math.hypot(
+                -10.25, 10.25),
+            Math.hypot(
+                10.25, 10.25)),
+        Math.max(
+            Math.hypot(-10.25, -10.25),
+            Math.hypot(
+                10.25, -10.25)));
   }
 
   public static final class Limelight2GConstants {
@@ -69,11 +76,11 @@ public final class Constants {
   }
 
   public static final class LimelightConstants {
-    public static final String name = "limelight";
-    public static final VisionObservation.LLTYPE limelightType = LLTYPE.LL4;
+    public static final String name = "limelight-front";
+    public static final VisionObservation.LLTYPE limelightType = LLTYPE.LL3;
     public static final double limelightMountHeight = Units.inchesToMeters(20.5);
-    public static final int detectorPiplineIndex = 2;
-    public static final int apriltagPipelineIndex = 1;
+    public static final int detectorPiplineIndex = 1;
+    public static final int apriltagPipelineIndex = 0;
     public static final double filterTimeConstant = 0.1; // in seconds, inputs occuring over a time period
     // significantly shorter than this will be thrown out
     public static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(10));

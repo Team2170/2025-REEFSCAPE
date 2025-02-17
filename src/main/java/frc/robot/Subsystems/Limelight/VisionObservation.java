@@ -30,6 +30,7 @@ public class VisionObservation {
   }
 
   public enum LLTYPE {
+    LL2,
     LL3,
     LL3G,
     LL4

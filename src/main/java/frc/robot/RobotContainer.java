@@ -11,11 +11,10 @@ import BobcatLib.Subsystems.Swerve.SimpleSwerve.Containers.SwerveBase;
 import BobcatLib.Subsystems.Swerve.SimpleSwerve.Swerve.Module.Utility.PIDConstants;
 import BobcatLib.Subsystems.Swerve.SimpleSwerve.Utility.Alliance;
 import BobcatLib.Subsystems.Swerve.Utility.LoadablePathPlannerAuto;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Commands.SingleTagAlign;
+import frc.robot.Commands.AlignOnReef;
 import frc.robot.Subsystems.Limelight.Vision;
 import frc.robot.Subsystems.Limelight.VisionIOLimelight;
 
@@ -29,7 +28,7 @@ import frc.robot.Subsystems.Limelight.VisionIOLimelight;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer extends SwerveBase {
-        public final Vision limelight;
+       public final Vision limelight;
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -61,7 +60,15 @@ public class RobotContainer extends SwerveBase {
         @Override
         public void configureButtonBindings() {
                 super.configureButtonBindings();
-                super.s_Controls.first_controller.getDPadTriggerUp().whileTrue( new SingleTagAlign(s_Swerve,() -> limelight.targetPoseCameraSpace().getX(),()->0 , ()-> Rotation2d.fromDegrees(0)));
+                // AutoAlign With Reef
+                super.s_Controls.first_controller.getYorTriangle().whileTrue(
+                        new AlignOnReef(
+                        super.s_Swerve,
+                        ()->super.s_Controls.getLeftXValue(),
+                        ()->super.s_Controls.getLeftYValue(),
+                        ()->super.s_Controls.getRightXValue(),
+                        ()->super.s_Controls.first_controller.getDPadTriggerRight().getAsBoolean(),
+                        ()->super.s_Controls.first_controller.getDPadTriggerLeft().getAsBoolean()));     
         }
 
         /**
