@@ -42,7 +42,7 @@ public class RobotContainer extends SwerveBase {
 
                 super(driver_controller, autos, robotName, isSim, alliance, tranPidPathPlanner, rotPidPathPlanner);
                 limelight = new Vision(s_Swerve,new VisionIOLimelight(Constants.LimelightConstants.constants));
-                
+                super.s_Swerve.fieldCentric = true;
         }
 
         public void periodic() {
