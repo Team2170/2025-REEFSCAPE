@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Commands.AlignOnReef;
+import frc.robot.Commands.AlignToSurface;
 import frc.robot.Subsystems.Limelight.Vision;
 import frc.robot.Subsystems.Limelight.VisionIOLimelight;
 
@@ -69,6 +70,14 @@ public class RobotContainer extends SwerveBase {
                         ()->super.s_Controls.getRightXValue(),
                         ()->super.s_Controls.first_controller.getDPadTriggerRight().getAsBoolean(),
                         ()->super.s_Controls.first_controller.getDPadTriggerLeft().getAsBoolean()));     
+                super.s_Controls.first_controller.getXorSquare().whileTrue(
+                        new AlignToSurface(
+                        super.s_Swerve,
+                        ()->super.s_Controls.getLeftXValue(),
+                        ()->super.s_Controls.getLeftYValue(),
+                        ()->super.s_Controls.getRightXValue(),
+                        ()->super.s_Controls.first_controller.getDPadTriggerRight().getAsBoolean(),
+                        ()->super.s_Controls.first_controller.getDPadTriggerLeft().getAsBoolean(),super.s_Controls.controllerJson));     
         }
 
         /**
