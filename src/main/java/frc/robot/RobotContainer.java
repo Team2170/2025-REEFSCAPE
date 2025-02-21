@@ -30,6 +30,7 @@ import frc.robot.Subsystems.Limelight.VisionIOLimelight;
  */
 public class RobotContainer extends SwerveBase {
        public final Vision limelight;
+       public final boolean isSim;
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -44,6 +45,7 @@ public class RobotContainer extends SwerveBase {
                 super(driver_controller, autos, robotName, isSim, alliance, tranPidPathPlanner, rotPidPathPlanner);
                 limelight = new Vision(s_Swerve,new VisionIOLimelight(Constants.LimelightConstants.constants));
                 super.s_Swerve.fieldCentric = true;
+                this.isSim = isSim;
         }
 
         public void periodic() {
@@ -77,7 +79,7 @@ public class RobotContainer extends SwerveBase {
                         ()->super.s_Controls.getLeftYValue(),
                         ()->super.s_Controls.getRightXValue(),
                         ()->super.s_Controls.first_controller.getDPadTriggerRight().getAsBoolean(),
-                        ()->super.s_Controls.first_controller.getDPadTriggerLeft().getAsBoolean(),super.s_Controls.controllerJson));     
+                        ()->super.s_Controls.first_controller.getDPadTriggerLeft().getAsBoolean(),super.s_Controls.controllerJson, isSim));     
         }
 
         /**

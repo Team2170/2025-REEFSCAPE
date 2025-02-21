@@ -92,7 +92,6 @@ public class AlignToSurface extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
     angleController.reset(s_Swerve.getPose().getRotation().getRadians());
   }
 
