@@ -28,6 +28,7 @@ public interface VisionIO {
     public double tClass = -1;
     public String name = "sim";
     // public CamMode camMode = CamMode.VISION;
+    public Pose2d botPoseMG1 = new Pose2d();
     public Pose2d botPoseMG2 = new Pose2d();
     public int tagCount = -1;
     public double avgTagDist = -1;

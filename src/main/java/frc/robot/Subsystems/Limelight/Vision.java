@@ -106,22 +106,21 @@ public class Vision extends SubsystemBase {
 
     if (inputs.name != "sim") {
       PoseEstimate estimate =  LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(inputs.name);
-      if( estimate == null){
-        estimate = new PoseEstimate();
+      if( estimate != null){
+        LimelightHelpers.RawFiducial[] rawTrackedTags = estimate.rawFiducials;
+        List<Integer> trackedTagID = new ArrayList<Integer>();
+  
+        for (int i = 0; i < rawTrackedTags.length; i++) {
+          trackedTagID.add(rawTrackedTags[i].id);
+        }
+  
+        Pose2d[] trackedTagPoses = new Pose2d[rawTrackedTags.length];
+        for (int i = 0; i < trackedTagID.size(); i++) {
+          trackedTagPoses[i] = aprilTagFieldLayout.getTagPose(trackedTagID.get(i)).get().toPose2d();
+        }
+        
+        Logger.recordOutput("limelight" + inputs.name + "/visionTargets", trackedTagPoses);
       }
-      LimelightHelpers.RawFiducial[] rawTrackedTags = estimate.rawFiducials;
-      List<Integer> trackedTagID = new ArrayList<Integer>();
-
-      for (int i = 0; i < rawTrackedTags.length; i++) {
-        trackedTagID.add(rawTrackedTags[i].id);
-      }
-
-      Pose2d[] trackedTagPoses = new Pose2d[rawTrackedTags.length];
-      for (int i = 0; i < trackedTagID.size(); i++) {
-        trackedTagPoses[i] = aprilTagFieldLayout.getTagPose(trackedTagID.get(i)).get().toPose2d();
-      }
-
-      Logger.recordOutput("limelight" + inputs.name + "/visionTargets", trackedTagPoses);
     }
   }
 
