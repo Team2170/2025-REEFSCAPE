@@ -10,6 +10,7 @@ import java.util.List;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.hardware.CANrange;
+import com.fasterxml.jackson.core.TreeNode;
 
 import BobcatLib.Hardware.Controllers.OI;
 import BobcatLib.Hardware.Sensors.SpatialSensor.Spatial;
@@ -24,12 +25,14 @@ import BobcatLib.Subsystems.Swerve.SimpleSwerve.Containers.SwerveBase;
 import BobcatLib.Subsystems.Swerve.SimpleSwerve.Swerve.Module.Utility.PIDConstants;
 import BobcatLib.Subsystems.Swerve.SimpleSwerve.Utility.Alliance;
 import BobcatLib.Subsystems.Swerve.Utility.LoadablePathPlannerAuto;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Commands.SingleTagAlign;
 import frc.robot.Subsystems.Limelight.Vision;
 import frc.robot.Subsystems.Limelight.VisionIOLimelight;
@@ -48,6 +51,7 @@ public class RobotContainer extends SwerveBase {
         private final Spatial distanceSensing;
         private boolean isSim; 
         private SpatialTOF stof;
+        private PIDController alignPID;
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -78,36 +82,52 @@ public class RobotContainer extends SwerveBase {
                 stof = new SpatialTOF(distanceSensors);
                 distanceSensing = new Spatial(stof);
 
-                SmartDashboard.putNumber("A", distanceSensing.getDistances().get("left"));
-                SmartDashboard.putNumber("B", distanceSensing.getDistances().get("right"));
+                alignPID = new PIDController(0.05, 0, 0);
         }
 
         public void periodic() {
+                
+                Logger.recordOutput("Sptial/isRunning", false);
                 s_Swerve.periodic();
                 distanceSensing.periodic();
 
+
+
+        }
+
+        public InstantCommand AutolignCommand(){
+                return new InstantCommand( () -> AutoAlign());
+        }
+
+        public void AutoAlign(){
+                Logger.recordOutput("Sptial/isRunning", true);
                 double leftRange = distanceSensing.getDistances().get("left");
                 double rightRange = distanceSensing.getDistances().get("right");
+                if( leftRange > rightRange)
+                {
+                        // Turn CCW
+                        boolean isOpenLoop = true;
+                        Translation2d linearTranslation = new Translation2d(0,0);
+                        double pidRotation = alignPID.calculate(s_Swerve.getHeading().getDegrees(), s_Swerve.getHeading().getDegrees()+10);
+                        s_Swerve.drive(linearTranslation, pidRotation, isOpenLoop,
+                                        s_Swerve.getHeading(),
+                                        s_Swerve.getPose());
+                }
+                else if ( rightRange > leftRange)
+                {
+                        // Turn CW
+                        boolean isOpenLoop = true;
+                        Translation2d linearTranslation = new Translation2d(0,0);
+                        double pidRotation = alignPID.calculate(s_Swerve.getHeading().getDegrees(), s_Swerve.getHeading().getDegrees()-10);                  
+                        s_Swerve.drive(linearTranslation, pidRotation, isOpenLoop,
+                                        s_Swerve.getHeading(),
+                                        s_Swerve.getPose());
+                }
+                else{
 
-                SmartDashboard.putNumber("Range 1 (Centimeters)", leftRange * 100);
-                SmartDashboard.putNumber("Range 2 (Centimeters)", rightRange * 100);
-
-                Logger.recordOutput("A", leftRange);
-
-                SmartDashboard.putBoolean("Controller", s_Controls.first_controller.getYorTriangle().getAsBoolean());
-
-                // if (s_Controls.first_controller.getYorTriangle().getAsBoolean() && leftRange > rightRange) {
-                //         double targetRotation2d = Math.asin((0.1 / (leftRange - rightRange)));
-                //         s_Swerve.drive(
-                //                 new Translation2d(), 
-                //                 targetRotation2d * s_Swerve.jsonSwerve.moduleSpeedLimits.maxAngularVelocity, 
-                //                 true, 
-                //                 s_Swerve.getHeading(), 
-                //                 s_Swerve.getPose());
-                // // } else if(s_Controls.first_controller.getYorTriangle().getAsBoolean()) {
-
-                // }
+                }
         }
+        
 
         /**
          * Use this method to define your button->command mappings. Buttons can be
@@ -121,6 +141,7 @@ public class RobotContainer extends SwerveBase {
         public void configureButtonBindings() {
                 super.configureButtonBindings();
                 // super.s_Controls.first_controller.getDPadTriggerUp().whileTrue( new SingleTagAlign(s_Swerve,() -> limelight.targetPoseCameraSpace().getX(),()->0 , ()-> Rotation2d.fromDegrees(0)));
+                super.s_Controls.first_controller.getRightBumper().whileTrue(AutolignCommand().repeatedly());
         }
 
         /**
