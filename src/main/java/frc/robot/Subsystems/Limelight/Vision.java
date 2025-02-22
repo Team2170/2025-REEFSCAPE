@@ -10,6 +10,7 @@ import java.util.List;
 import org.littletonrobotics.junction.Logger;
 
 import BobcatLib.Subsystems.Swerve.SimpleSwerve.SwerveDrive;
+//import BobcatLib.Subsystems.Vision.Components.VisionIOInputsAutoLogged;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
