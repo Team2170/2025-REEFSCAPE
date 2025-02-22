@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.List;
+
 import BobcatLib.Hardware.Controllers.OI;
 import BobcatLib.Subsystems.Swerve.SimpleSwerve.Containers.SwerveBase;
 import BobcatLib.Subsystems.Swerve.SimpleSwerve.Swerve.Module.Utility.PIDConstants;
@@ -13,7 +14,10 @@ import BobcatLib.Subsystems.Swerve.Utility.LoadablePathPlannerAuto;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Commands.AlignOnReef;
+import frc.robot.Commands.AlignToSurface;
+import frc.robot.Subsystems.Limelight.Vision;
+import frc.robot.Subsystems.Limelight.VisionIOLimelight;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -25,7 +29,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer extends SwerveBase {
-
+       public final Vision limelight;
+       public final boolean isSim;
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -38,9 +43,13 @@ public class RobotContainer extends SwerveBase {
                         PIDConstants rotPidPathPlanner) {
 
                 super(driver_controller, autos, robotName, isSim, alliance, tranPidPathPlanner, rotPidPathPlanner);
+                limelight = new Vision(s_Swerve,new VisionIOLimelight(Constants.LimelightConstants.constants));
+                super.s_Swerve.fieldCentric = true;
+                this.isSim = isSim;
         }
 
         public void periodic() {
+                limelight.periodic();
                 s_Swerve.periodic();
         }
 
@@ -55,6 +64,23 @@ public class RobotContainer extends SwerveBase {
         @Override
         public void configureButtonBindings() {
                 super.configureButtonBindings();
+                // AutoAlign With Reef
+                super.s_Controls.first_controller.getYorTriangle().whileTrue(
+                        new AlignOnReef(
+                        super.s_Swerve,
+                        ()->super.s_Controls.getLeftXValue(),
+                        ()->super.s_Controls.getLeftYValue(),
+                        ()->super.s_Controls.getRightXValue(),
+                        ()->super.s_Controls.first_controller.getDPadTriggerRight().getAsBoolean(),
+                        ()->super.s_Controls.first_controller.getDPadTriggerLeft().getAsBoolean()));     
+                super.s_Controls.first_controller.getXorSquare().whileTrue(
+                        new AlignToSurface(
+                        super.s_Swerve,
+                        ()->super.s_Controls.getLeftXValue(),
+                        ()->super.s_Controls.getLeftYValue(),
+                        ()->super.s_Controls.getRightXValue(),
+                        ()->super.s_Controls.first_controller.getDPadTriggerRight().getAsBoolean(),
+                        ()->super.s_Controls.first_controller.getDPadTriggerLeft().getAsBoolean(),super.s_Controls.controllerJson, isSim));     
         }
 
         /**

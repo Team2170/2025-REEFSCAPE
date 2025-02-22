@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
  */
 public class Robot extends BobcatLibCoreRobot {
   private Command m_autonomousCommand;
+
+  private Command m_testCommand;
   private OI driver_controller;
   public static Alliance alliance;
 
@@ -36,16 +38,13 @@ public class Robot extends BobcatLibCoreRobot {
    */
   public Robot() {
     super(RobotBase.isReal());
-      
     alliance = new Alliance();
-    
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
     List<LoadablePathPlannerAuto> loadableAutos = new ArrayList<LoadablePathPlannerAuto>();
     loadableAutos.add(new LoadablePathPlannerAuto("Do Nothing", Commands.none(), true));
-
-    String robotName = "2024_Robot";
+    String robotName = "2023_Robot";
     boolean isSim = false;
     PIDConstants tranPidPathPlanner = new PIDConstants(10, 0, 0);
     PIDConstants rotPidPathPlanner = new PIDConstants(5, 0, 0);
@@ -53,12 +52,9 @@ public class Robot extends BobcatLibCoreRobot {
     m_robotContainer = new RobotContainer(driver_controller, loadableAutos, robotName,
     isSim, alliance, tranPidPathPlanner,
     rotPidPathPlanner);
-  //Praneeth is amazing lol he is literally the best kid
-
     loadableAutos.add(new LoadablePathPlannerAuto("Base", new PathPlannerAuto("Base").withName("Base"), false));
     loadableAutos.add(new LoadablePathPlannerAuto("Auto1", new PathPlannerAuto("Auto1").withName("Auto1"), false));
     m_robotContainer.updateLoadedPaths(loadableAutos);
-
   }
 
   /**
@@ -126,10 +122,13 @@ public class Robot extends BobcatLibCoreRobot {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
 
-    m_robotContainer.getTestCommand().schedule();
+    m_testCommand = m_robotContainer.getTestCommand();
+    m_testCommand.schedule();
   }
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+
+  }
 }
