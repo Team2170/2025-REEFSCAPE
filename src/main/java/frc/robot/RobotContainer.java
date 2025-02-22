@@ -49,6 +49,7 @@ public class RobotContainer extends SwerveBase {
         }
 
         public void periodic() {
+                limelight.periodic();
                 s_Swerve.periodic();
         }
 
