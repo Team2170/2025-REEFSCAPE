@@ -2,6 +2,7 @@ package frc.robot.Subsystems.Elevator.Components;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -19,15 +20,17 @@ import frc.robot.Subsystems.Elevator.Utility.ElevatorState;
 public class ElevatorIOReal implements ElevatorIO {
 
   public static final double GEAR_RATIO = 0.00; // SET THIS UP
-  public static final InvertedValue ELEVATOR_MOTOR_INVERTED =
-      InvertedValue.CounterClockwise_Positive; // SET THIS UP
+  public static final InvertedValue ELEVATOR_MOTOR_INVERTED = InvertedValue.CounterClockwise_Positive; // SET THIS UP
 
   /**
-   * note that kG is different from ks, even they are both static forces, ks always opposes the
-   * direction of motion, kg is always in the same direction, regardless of which way the elevator
+   * note that kG is different from ks, even they are both static forces, ks
+   * always opposes the
+   * direction of motion, kg is always in the same direction, regardless of which
+   * way the elevator
    * is moving
    */
   private TalonFX motor;
+  private TalonFX mFollower;
 
   private CANcoder encoder;
 
@@ -35,8 +38,8 @@ public class ElevatorIOReal implements ElevatorIO {
 
   private ElevatorState desiredState = ElevatorState.UNKNOWN;
 
-  public ElevatorIOReal(int motorID, int encoderID) {
-    motor = new TalonFX(motorID);
+  public ElevatorIOReal(int motorID, int motorFollowerId, String canbus, int encoderID) {
+    motor = new TalonFX(motorID, canbus);
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
     motor.getConfigurator().apply(motorConfig); // reset to factory default
 
@@ -61,8 +64,7 @@ public class ElevatorIOReal implements ElevatorIO {
     motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     motorConfig.Feedback.RotorToSensorRatio = GEAR_RATIO;
     motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        Elevator.MAX_ROTATIONS.getRotations();
+    motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Elevator.MAX_ROTATIONS.getRotations();
     motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
@@ -74,17 +76,19 @@ public class ElevatorIOReal implements ElevatorIO {
     encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     encoderConfig.MagnetSensor.MagnetOffset = 0.219971; // TODO find this
     encoder.getConfigurator().apply(encoderConfig);
+
+    mFollower = new TalonFX(motorFollowerId, canbus);
+    mFollower.getConfigurator().apply(motorConfig);
+    mFollower.setControl(new Follower(motor.getDeviceID(), false));
   }
 
   public void updateInputs(ElevatorIOInputs inputs) {
     inputs.torqueCurrentAmps = motor.getTorqueCurrent().getValueAsDouble();
-    inputs.velocityRotPerSec =  motor.getVelocity().getValueAsDouble();
+    inputs.velocityRotPerSec = motor.getVelocity().getValueAsDouble();
     inputs.rotPosition = Rotation2d.fromRotations(encoder.getPosition().getValueAsDouble());
-    inputs.positionPercent =
-    encoder.getPosition().getValueAsDouble() / Elevator.MAX_ROTATIONS.getRotations();
-    inputs.aligned =
-        Math.abs(encoder.getPosition().getValueAsDouble() - desiredState.pos.getRotations())
-            < Elevator.ELEVATOR_TOLERANCE.getRotations();
+    inputs.positionPercent = encoder.getPosition().getValueAsDouble() / Elevator.MAX_ROTATIONS.getRotations();
+    inputs.aligned = Math.abs(encoder.getPosition().getValueAsDouble()
+        - desiredState.pos.getRotations()) < Elevator.ELEVATOR_TOLERANCE.getRotations();
     inputs.motorConnected = motor.isConnected();
     inputs.encoderConnected = encoder.isConnected();
     inputs.controlMode = motor.getControlMode().getValue();
