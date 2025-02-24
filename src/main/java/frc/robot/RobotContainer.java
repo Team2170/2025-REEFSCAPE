@@ -75,6 +75,7 @@ public class RobotContainer extends SwerveBase {
                         ()->super.s_Controls.getRightXValue(),
                         ()->super.s_Controls.first_controller.getDPadTriggerRight().getAsBoolean(),
                         ()->super.s_Controls.first_controller.getDPadTriggerLeft().getAsBoolean()));
+                //super.s_Controls.first_controller.getXorSquare().whileTrue(new RunCommand(() -> m_climber.setPercentOut(.5), m_climber)).onFalse(new InstantCommand(m_climber::stop));
         }
 
         /**
