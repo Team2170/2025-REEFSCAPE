@@ -23,11 +23,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Constants;
-import frc.robot.Constants.Constants.Limelight_BackCenterConstants;
-import frc.robot.Constants.Constants.Limelight_BackLeftConstants;
-import frc.robot.Constants.Constants.Limelight_BackRightConstants;
-import frc.robot.Constants.Constants.Limelight_FrontLeftConstants;
-import frc.robot.Constants.Constants.Limelight_FrontRightConstants;
 import frc.robot.commands.CharacterizationCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -37,9 +32,6 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.DSUtil;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -52,11 +44,11 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Vision limelight_frontleft;
-  private final Vision limelight_frontright;
-  private final Vision limelight_backleft;
-  private final Vision limelight_backcenter;
-  private final Vision limelight_backright;
+  //   private final Vision limelight_frontleft;
+  //   private final Vision limelight_frontright;
+  //   private final Vision limelight_backleft;
+  //   private final Vision limelight_backcenter;
+  //   private final Vision limelight_backright;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -77,16 +69,16 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        limelight_frontleft =
-            new Vision(drive, new VisionIOLimelight(Limelight_FrontLeftConstants.constants));
-        limelight_frontright =
-            new Vision(drive, new VisionIOLimelight(Limelight_FrontRightConstants.constants));
-        limelight_backcenter =
-            new Vision(drive, new VisionIOLimelight(Limelight_BackCenterConstants.constants));
-        limelight_backleft =
-            new Vision(drive, new VisionIOLimelight(Limelight_BackLeftConstants.constants));
-        limelight_backright =
-            new Vision(drive, new VisionIOLimelight(Limelight_BackRightConstants.constants));
+        // limelight_frontleft =
+        //     new Vision(drive, new VisionIOLimelight(Limelight_FrontLeftConstants.constants));
+        // limelight_frontright =
+        //     new Vision(drive, new VisionIOLimelight(Limelight_FrontRightConstants.constants));
+        // limelight_backcenter =
+        //     new Vision(drive, new VisionIOLimelight(Limelight_BackCenterConstants.constants));
+        // limelight_backleft =
+        //     new Vision(drive, new VisionIOLimelight(Limelight_BackLeftConstants.constants));
+        // limelight_backright =
+        //     new Vision(drive, new VisionIOLimelight(Limelight_BackRightConstants.constants));
         break;
 
       case SIM:
@@ -98,11 +90,11 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        limelight_frontleft = new Vision(drive, new VisionIO() {});
-        limelight_frontright = new Vision(drive, new VisionIO() {});
-        limelight_backcenter = new Vision(drive, new VisionIO() {});
-        limelight_backleft = new Vision(drive, new VisionIO() {});
-        limelight_backright = new Vision(drive, new VisionIO() {});
+        // limelight_frontleft = new Vision(drive, new VisionIO() {});
+        // limelight_frontright = new Vision(drive, new VisionIO() {});
+        // limelight_backcenter = new Vision(drive, new VisionIO() {});
+        // limelight_backleft = new Vision(drive, new VisionIO() {});
+        // limelight_backright = new Vision(drive, new VisionIO() {});
         break;
 
       default:
@@ -115,11 +107,11 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        limelight_frontleft = new Vision(drive, new VisionIO() {});
-        limelight_frontright = new Vision(drive, new VisionIO() {});
-        limelight_backcenter = new Vision(drive, new VisionIO() {});
-        limelight_backleft = new Vision(drive, new VisionIO() {});
-        limelight_backright = new Vision(drive, new VisionIO() {});
+        // limelight_frontleft = new Vision(drive, new VisionIO() {});
+        // limelight_frontright = new Vision(drive, new VisionIO() {});
+        // limelight_backcenter = new Vision(drive, new VisionIO() {});
+        // limelight_backleft = new Vision(drive, new VisionIO() {});
+        // limelight_backright = new Vision(drive, new VisionIO() {});
         break;
     }
 
