@@ -101,4 +101,8 @@ public class ElevatorIOReal implements ElevatorIO {
     this.desiredState = state;
     motor.setControl(positionRequest.withPosition(state.pos.getRotations()));
   }
+
+  public void setPercentOutput(double percent){
+    motor.set(percent);
+  }
 }

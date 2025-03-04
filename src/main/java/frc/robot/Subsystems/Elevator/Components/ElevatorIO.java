@@ -31,4 +31,8 @@ public interface ElevatorIO {
 
   public default void setDesiredState(ElevatorState state) {
   }
+
+  public default void setPercentOutput(double percent){
+
+  }
 }

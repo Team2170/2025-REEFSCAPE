@@ -97,4 +97,12 @@ public final class Constants {
 
     public static final String ip = "10.1.77.17";
   }
+
+  public static final class ElevatorConstants{
+    public static final int elevatorMasterId = 0;
+    public static final int elevatorFollowerId = 0;
+    public static final int elevatorMasterCancoderId = 0;
+    public static final int elevatorFollowerCancoderId = 0;
+    public static final String canbus = "rio";
+  }
 }

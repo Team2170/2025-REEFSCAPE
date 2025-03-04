@@ -14,7 +14,11 @@ import BobcatLib.Subsystems.Swerve.Utility.LoadablePathPlannerAuto;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.AlignOnReef;
+import frc.robot.Subsystems.Elevator.Elevator;
+import frc.robot.Subsystems.Elevator.Components.ElevatorIOReal;
 import frc.robot.Subsystems.Limelight.Vision;
 import frc.robot.Subsystems.Limelight.VisionIOLimelight;
 
@@ -28,9 +32,12 @@ import frc.robot.Subsystems.Limelight.VisionIOLimelight;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer extends SwerveBase {
-       public final Vision limelight_fl;
+        public final Elevator elevator;
+       //public final Vision limelight_fl;
        //public final Vision limelight_fr;
        public final boolean isSim;
+
+       public final CommandXboxController operator;
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -43,16 +50,19 @@ public class RobotContainer extends SwerveBase {
                         PIDConstants rotPidPathPlanner) {
 
                 super(driver_controller, autos, robotName, isSim, alliance, tranPidPathPlanner, rotPidPathPlanner);
-                limelight_fl = new Vision(s_Swerve,new VisionIOLimelight(Constants.LimelightConstants.constants));
+                //limelight_fl = new Vision(s_Swerve,new VisionIOLimelight(Constants.LimelightConstants.constants));
                 //limelight_fr = new Vision(s_Swerve,new VisionIOLimelight(Constants.LimelightConstants.constants));
                 super.s_Swerve.fieldCentric = true;
                 this.isSim = isSim;
+                elevator = new Elevator(new ElevatorIOReal(Constants.ElevatorConstants.elevatorMasterId,Constants.ElevatorConstants.elevatorFollowerId,Constants.ElevatorConstants.canbus,Constants.ElevatorConstants.elevatorMasterCancoderId));
+                operator = new CommandXboxController(1);
         }
 
         public void periodic() {
-                limelight_fl.periodic();
+                //limelight_fl.periodic();
                 //limelight_fr.periodic();
                 s_Swerve.periodic();
+                elevator.periodic();
         }
 
         /**
@@ -76,7 +86,10 @@ public class RobotContainer extends SwerveBase {
                         ()->super.s_Controls.first_controller.getDPadTriggerRight().getAsBoolean(),
                         ()->super.s_Controls.first_controller.getDPadTriggerLeft().getAsBoolean()));
                 //super.s_Controls.first_controller.getXorSquare().whileTrue(new RunCommand(() -> m_climber.setPercentOut(.5), m_climber)).onFalse(new InstantCommand(m_climber::stop));
+                operator.leftBumper().whileTrue(new InstantCommand(()->elevator.setPercentOutput(elevator.PERCENT_OUTPUT)));
+                operator.rightBumper().whileTrue(new InstantCommand(()->elevator.setPercentOutput(-elevator.PERCENT_OUTPUT)));
         }
+        
 
         /**
          * Use this to pass the autonomous command to the main {@link Robot} class.
