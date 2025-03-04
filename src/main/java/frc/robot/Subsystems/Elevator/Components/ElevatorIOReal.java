@@ -49,11 +49,11 @@ public class ElevatorIOReal implements ElevatorIO {
     motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     motorConfig.CurrentLimits.StatorCurrentLimit = 120;
 
-    motorConfig.Slot0.kP = 45;
-    motorConfig.Slot0.kI = 25;
-    motorConfig.Slot0.kD = 7;
-    motorConfig.Slot0.kS = 16.5;
-    motorConfig.Slot0.kG = 36.5;
+    motorConfig.Slot0.kP = 1;
+    motorConfig.Slot0.kI = 0;
+    motorConfig.Slot0.kD = 0;
+    motorConfig.Slot0.kS = 0;
+    motorConfig.Slot0.kG = 0;
     motorConfig.MotionMagic.MotionMagicAcceleration = 4.5;
     motorConfig.MotionMagic.MotionMagicCruiseVelocity = 7.695;
     motorConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;

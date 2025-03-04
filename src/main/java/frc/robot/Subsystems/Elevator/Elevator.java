@@ -29,6 +29,9 @@ public class Elevator extends SubsystemBase {
   private ElevatorIO io;
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
+  public static final double PERCENT_OUTPUT = 0.4;
+  public static final double HOLD_OUTPUT = 0.1;
+
   private final Alert motorDisconnectedAlert =
       new Alert("Elevator motor disconnected!", Alert.AlertType.kWarning);
   private final Alert encoderDisconnectedAlert =
@@ -51,6 +54,10 @@ public class Elevator extends SubsystemBase {
 
   public void setState(ElevatorState desiredState) {
     io.setDesiredState(desiredState);
+  }
+
+  public void setPercentOutput(double percent){
+    io.setPercentOutput(percent);
   }
 
   public ElevatorState getState() {
