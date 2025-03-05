@@ -37,7 +37,7 @@ public class RobotContainer extends SwerveBase {
        //public final Vision limelight_fr;
        public final boolean isSim;
 
-       public final CommandXboxController operator;
+//        public final CommandXboxController operator;
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -55,7 +55,7 @@ public class RobotContainer extends SwerveBase {
                 super.s_Swerve.fieldCentric = true;
                 this.isSim = isSim;
                 elevator = new Elevator(new ElevatorIOReal(Constants.ElevatorConstants.elevatorMasterId,Constants.ElevatorConstants.elevatorFollowerId,Constants.ElevatorConstants.canbus,Constants.ElevatorConstants.elevatorMasterCancoderId));
-                operator = new CommandXboxController(1);
+                //operator = new CommandXboxController(1);
         }
 
         public void periodic() {
@@ -86,8 +86,8 @@ public class RobotContainer extends SwerveBase {
                         ()->super.s_Controls.first_controller.getDPadTriggerRight().getAsBoolean(),
                         ()->super.s_Controls.first_controller.getDPadTriggerLeft().getAsBoolean()));
                 //super.s_Controls.first_controller.getXorSquare().whileTrue(new RunCommand(() -> m_climber.setPercentOut(.5), m_climber)).onFalse(new InstantCommand(m_climber::stop));
-                operator.leftBumper().whileTrue(new InstantCommand(()->elevator.setPercentOutput(elevator.PERCENT_OUTPUT)));
-                operator.rightBumper().whileTrue(new InstantCommand(()->elevator.setPercentOutput(-elevator.PERCENT_OUTPUT)));
+                // operator.leftBumper().whileTrue(new InstantCommand(()->elevator.setPercentOutput(elevator.PERCENT_OUTPUT)));
+                // operator.rightBumper().whileTrue(new InstantCommand(()->elevator.setPercentOutput(-elevator.PERCENT_OUTPUT)));
         }
         
 
