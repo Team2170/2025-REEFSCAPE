@@ -95,12 +95,12 @@ public final class Constants {
         Limelight4Constants.horPixles,
         visionMeasurementStdDevs);
 
-    public static final String ip = "10.1.77.17";
+    public static final String ip = "10.1.77.17"; //TODO: CHANGE TO 2170 Limelight IDS
   }
 
   public static final class ElevatorConstants{
-    public static final int elevatorMasterId = 0;
-    public static final int elevatorFollowerId = 0;
+    public static final int elevatorMasterId = 27;
+    public static final int elevatorFollowerId = 25;
     public static final int elevatorMasterCancoderId = 0;
     public static final int elevatorFollowerCancoderId = 0;
     public static final String canbus = "rio";
