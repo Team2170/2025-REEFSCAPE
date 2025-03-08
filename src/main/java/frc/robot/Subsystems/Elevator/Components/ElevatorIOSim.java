@@ -76,4 +76,11 @@ public class ElevatorIOSim implements ElevatorIO {
   public void setPercentOutput(double percent){
     motor.set(percent);
   }
+
+  public void stop(){
+
+  }
+  public void hold(double hold){
+    
+  }
 }

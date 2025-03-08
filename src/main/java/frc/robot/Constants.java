@@ -101,8 +101,8 @@ public final class Constants {
   public static final class ElevatorConstants{
     public static final int elevatorMasterId = 27;
     public static final int elevatorFollowerId = 25;
-    public static final int elevatorMasterCancoderId = 0;
-    public static final int elevatorFollowerCancoderId = 0;
+    public static final int elevatorMasterCancoderId = 22;
+    public static final int elevatorFollowerCancoderId = 23;
     public static final String canbus = "rio";
   }
 }

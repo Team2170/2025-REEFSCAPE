@@ -35,4 +35,10 @@ public interface ElevatorIO {
   public default void setPercentOutput(double percent){
 
   }
+  public default void stop(){
+
+  }
+  public default void hold(double hold){
+    
+  }
 }
