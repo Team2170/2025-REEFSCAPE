@@ -41,4 +41,7 @@ public interface ElevatorIO {
   public default void hold(double hold){
     
   }
+  public default double averagedPosition(){
+    return 0.0;
+  }
 }

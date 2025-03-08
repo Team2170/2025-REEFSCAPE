@@ -105,4 +105,7 @@ public final class Constants {
     public static final int elevatorFollowerCancoderId = 23;
     public static final String canbus = "rio";
   }
+  public static final class CoralGrabberConstants{
+    public static final int coralGrabberMotorId = 30;
+  }
 }

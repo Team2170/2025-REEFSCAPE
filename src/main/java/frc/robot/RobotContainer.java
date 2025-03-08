@@ -18,8 +18,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.AlignOnReef;
+import frc.robot.Subsystems.CoralGrabber.CoralGrabber;
+import frc.robot.Subsystems.CoralGrabber.Components.CoralGrabberIOReal;
+import frc.robot.Subsystems.CoralGrabber.Utility.CoralGrabberConfiguration;
 import frc.robot.Subsystems.Elevator.Elevator;
 import frc.robot.Subsystems.Elevator.Components.ElevatorIOReal;
+import frc.robot.Subsystems.Elevator.Utility.ElevatorState;
 import frc.robot.Subsystems.Limelight.Vision;
 import frc.robot.Subsystems.Limelight.VisionIOLimelight;
 
@@ -34,6 +38,7 @@ import frc.robot.Subsystems.Limelight.VisionIOLimelight;
  */
 public class RobotContainer extends SwerveBase {
         public final Elevator elevator;
+        public final CoralGrabber shooter;
         // public final Vision limelight_fl;
         // public final Vision limelight_fr;
         public final boolean isSim;
@@ -61,6 +66,8 @@ public class RobotContainer extends SwerveBase {
                 elevator = new Elevator(new ElevatorIOReal(Constants.ElevatorConstants.elevatorMasterId,
                                 Constants.ElevatorConstants.elevatorFollowerId, Constants.ElevatorConstants.canbus,
                                 Constants.ElevatorConstants.elevatorMasterCancoderId));
+                shooter = new CoralGrabber("Shooter", new CoralGrabberIOReal(
+                                Constants.CoralGrabberConstants.coralGrabberMotorId, "rio", "rio"));
                 operator = new CommandXboxController(1);
                 configureOperatorButtonBindings();
         }
@@ -95,11 +102,23 @@ public class RobotContainer extends SwerveBase {
                 // super.s_Controls.first_controller.getXorSquare().whileTrue(new RunCommand(()
                 // -> m_climber.setPercentOut(.5), m_climber)).onFalse(new
                 // InstantCommand(m_climber::stop));
-                Command holdElevatorPosition = new  InstantCommand(()->elevator.stop());
+                Command holdElevatorPosition = new InstantCommand(() -> elevator.hold(-elevator.HOLD_OUTPUT));
                 operator.leftBumper().whileTrue(
-                                new InstantCommand(() -> elevator.setPercentOutput(elevator.PERCENT_OUTPUT))).onFalse(holdElevatorPosition);
+                                new InstantCommand(() -> elevator.setPercentOutput(elevator.PERCENT_OUTPUT)))
+                                .onFalse(holdElevatorPosition);
                 operator.rightBumper().whileTrue(
-                                new InstantCommand(() -> elevator.setPercentOutput(-elevator.PERCENT_OUTPUT))).onFalse(holdElevatorPosition);
+                                new InstantCommand(() -> elevator.setPercentOutput(-elevator.PERCENT_OUTPUT)))
+                                .onFalse(holdElevatorPosition);
+                operator.x().whileTrue(
+                                        new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)))
+                                        .onFalse(holdElevatorPosition);
+                operator.a().whileTrue(new InstantCommand(() -> shooter.setIntakeSpeed(-0.30)))
+                                .onFalse(new InstantCommand(() -> shooter.setIntakeSpeed(0)));
+
+                operator.b().whileTrue(new InstantCommand(() -> shooter.setIntakeSpeed(0.17)))
+                                .onFalse(new InstantCommand(() -> shooter.setIntakeSpeed(0)));
+                
+
         }
 
         /**

@@ -17,7 +17,7 @@ public class Elevator extends SubsystemBase {
 
   public static final Rotation2d ELEVATOR_TOLERANCE = Rotation2d.fromDegrees(3); // Tune as Needed
   /** the number of rotations the encoder spins when it is at the top */
-  public static final Rotation2d MAX_ROTATIONS = Rotation2d.fromRotations(80); // SET ME UP!!!
+  public static final Rotation2d MAX_ROTATIONS = Rotation2d.fromRotations(142); // SET ME UP!!!
 
   public static final Distance ELEVATOR_MAX_HEIGHT = Inches.of(0);  // SET ME UP!!!
 
@@ -29,8 +29,8 @@ public class Elevator extends SubsystemBase {
   private ElevatorIO io;
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
-  public static final double PERCENT_OUTPUT = 0.1;
-  public static final double HOLD_OUTPUT = 0.05;
+  public static final double PERCENT_OUTPUT = 0.3;
+  public static final double HOLD_OUTPUT = 0.005;
 
   private final Alert motorDisconnectedAlert =
       new Alert("Elevator motor disconnected!", Alert.AlertType.kWarning);
