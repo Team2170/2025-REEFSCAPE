@@ -29,8 +29,8 @@ public class Elevator extends SubsystemBase {
   private ElevatorIO io;
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
-  public static final double PERCENT_OUTPUT = 0.8;
-  public static final double HOLD_OUTPUT = 0.2;
+  public static final double PERCENT_OUTPUT = 0.1;
+  public static final double HOLD_OUTPUT = 0.05;
 
   private final Alert motorDisconnectedAlert =
       new Alert("Elevator motor disconnected!", Alert.AlertType.kWarning);

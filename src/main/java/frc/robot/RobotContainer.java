@@ -95,7 +95,7 @@ public class RobotContainer extends SwerveBase {
                 // super.s_Controls.first_controller.getXorSquare().whileTrue(new RunCommand(()
                 // -> m_climber.setPercentOut(.5), m_climber)).onFalse(new
                 // InstantCommand(m_climber::stop));
-                Command holdElevatorPosition = new  InstantCommand(()->elevator.stop()).repeatedly();
+                Command holdElevatorPosition = new  InstantCommand(()->elevator.stop());
                 operator.leftBumper().whileTrue(
                                 new InstantCommand(() -> elevator.setPercentOutput(elevator.PERCENT_OUTPUT))).onFalse(holdElevatorPosition);
                 operator.rightBumper().whileTrue(
