@@ -18,7 +18,7 @@ import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.subsystems.vision.limelightConstants;
+import frc.robot.Subsystems.vision.limelightConstants;
 import frc.robot.util.VisionObservation;
 import frc.robot.util.VisionObservation.LLTYPE;
 
@@ -194,5 +194,21 @@ public final class Constants {
             visionMeasurementStdDevs);
 
     public static final String ip = "10.1.77.11";
+  }
+
+  public static final class ElevatorConstants {
+    public static final int elevatorMasterId = 27;
+    public static final int elevatorFollowerId = 25;
+    public static final int elevatorMasterCancoderId = 22;
+    public static final int elevatorFollowerCancoderId = 23;
+    public static final String canbus = "rio";
+  }
+
+  public static final class CoralGrabberConstants {
+    public static final int coralGrabberMotorId = 30;
+  }
+
+  public static final class ClimberConstants {
+    public static final int climberMotorId = 31;
   }
 }

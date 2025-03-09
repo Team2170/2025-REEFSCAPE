@@ -20,19 +20,24 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Constants;
+import frc.robot.Subsystems.CoralGrabber.Components.CoralGrabberIOReal;
+import frc.robot.Subsystems.CoralGrabber.CoralGrabber;
+import frc.robot.Subsystems.Elevator.Components.ElevatorIOReal;
+import frc.robot.Subsystems.Elevator.Elevator;
+import frc.robot.Subsystems.Elevator.Utility.ElevatorState;
+import frc.robot.Subsystems.drive.Drive;
+import frc.robot.Subsystems.drive.GyroIO;
+import frc.robot.Subsystems.drive.GyroIOPigeon2;
+import frc.robot.Subsystems.drive.ModuleIO;
+import frc.robot.Subsystems.drive.ModuleIOSim;
+import frc.robot.Subsystems.drive.ModuleIOTalonFX;
 import frc.robot.commands.CharacterizationCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
-import frc.robot.subsystems.drive.ModuleIO;
-import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.util.DSUtil;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -43,6 +48,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
+  public final Elevator elevator;
+  public final CoralGrabber shooter;
   private final Drive drive;
   //   private final Vision limelight_frontleft;
   //   private final Vision limelight_frontright;
@@ -53,6 +60,7 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
+  public final CommandXboxController operator;
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -136,8 +144,28 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    elevator =
+        new Elevator(
+            new ElevatorIOReal(
+                Constants.ElevatorConstants.elevatorMasterId,
+                Constants.ElevatorConstants.elevatorFollowerId,
+                Constants.ElevatorConstants.canbus,
+                Constants.ElevatorConstants.elevatorMasterCancoderId));
+    shooter =
+        new CoralGrabber(
+            "Shooter",
+            new CoralGrabberIOReal(
+                Constants.CoralGrabberConstants.coralGrabberMotorId, "rio", "rio"));
+    operator = new CommandXboxController(1);
+
     // Configure the button bindings
     configureButtonBindings();
+  }
+
+  public void periodic() {
+    // limelight_fl.periodic();
+    // limelight_fr.periodic();
+    elevator.periodic();
   }
 
   /**
@@ -156,47 +184,6 @@ public class RobotContainer {
             () -> -controller.getRightX(),
             controller.a()));
 
-    // autoalign
-
-    Rotation2d hp_right;
-    Rotation2d hp_left;
-    Rotation2d NorthFace;
-    Rotation2d NorthWestFace;
-    Rotation2d SouthWestFace;
-    Rotation2d SouthFace;
-    Rotation2d NorthEastFace;
-    Rotation2d SouthEastFace;
-
-    NorthFace = Rotation2d.fromDegrees(0);
-    SouthFace = NorthFace.plus(Rotation2d.fromDegrees(180));
-    NorthWestFace = Rotation2d.fromDegrees(60);
-    SouthEastFace = NorthWestFace.plus(Rotation2d.fromDegrees(180));
-    SouthWestFace = Rotation2d.fromDegrees(120);
-    NorthEastFace = SouthWestFace.plus(Rotation2d.fromDegrees(180));
-    if (DSUtil.isBlue()) {
-      hp_right = Rotation2d.fromDegrees(-30);
-      hp_left = Rotation2d.fromDegrees(60);
-    } else {
-      hp_right = Rotation2d.fromDegrees(60);
-      hp_left = Rotation2d.fromDegrees(-30);
-    }
-
-    controller
-        .x()
-        .whileTrue(
-            DriveCommands.joystickDriveAndAlignWithHP(
-                drive, () -> controller.getLeftY(), () -> controller.getLeftX(), () -> hp_left));
-    controller
-        .b()
-        .whileTrue(
-            DriveCommands.joystickDriveAndAlignWithHP(
-                drive, () -> controller.getLeftY(), () -> controller.getLeftX(), () -> hp_right));
-    controller
-        .leftBumper()
-        .whileTrue(
-            DriveCommands.DriveToReefFace(
-                drive, () -> controller.getLeftY(), () -> controller.getLeftX(), NorthWestFace));
-
     // Switch to X pattern when X button is pressed
     controller.y().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
@@ -210,6 +197,29 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    Command holdElevatorPosition = new InstantCommand(() -> elevator.hold(-elevator.HOLD_OUTPUT));
+    operator
+        .leftBumper()
+        .whileTrue(new InstantCommand(() -> elevator.setPercentOutput(elevator.PERCENT_OUTPUT)))
+        .onFalse(holdElevatorPosition);
+    operator
+        .rightBumper()
+        .whileTrue(new InstantCommand(() -> elevator.setPercentOutput(-elevator.PERCENT_OUTPUT)))
+        .onFalse(holdElevatorPosition);
+    operator
+        .x()
+        .whileTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)))
+        .onFalse(holdElevatorPosition);
+    operator
+        .a()
+        .whileTrue(new InstantCommand(() -> shooter.setIntakeSpeed(-0.30)))
+        .onFalse(new InstantCommand(() -> shooter.setIntakeSpeed(0)));
+
+    operator
+        .b()
+        .whileTrue(new InstantCommand(() -> shooter.setIntakeSpeed(0.17)))
+        .onFalse(new InstantCommand(() -> shooter.setIntakeSpeed(0)));
   }
 
   /**
