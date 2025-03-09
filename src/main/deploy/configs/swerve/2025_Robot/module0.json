@@ -14,7 +14,7 @@
     "type": "cancoder",
     "id": 1,
     "canbus": "CANt_open_file",
-    "offset": -0.151,
+    "offset": 0.3569,
     "inverted": false
   },
   "manufacturer":"sds",

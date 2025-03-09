@@ -44,7 +44,7 @@ public class Robot extends BobcatLibCoreRobot {
     // autonomous chooser on the dashboard.
     List<LoadablePathPlannerAuto> loadableAutos = new ArrayList<LoadablePathPlannerAuto>();
     loadableAutos.add(new LoadablePathPlannerAuto("Do Nothing", Commands.none(), true));
-    String robotName = "2024_Robot";
+    String robotName = "2025_Robot";
     boolean isSim = false;
     PIDConstants tranPidPathPlanner = new PIDConstants(10, 0, 0);
     PIDConstants rotPidPathPlanner = new PIDConstants(5, 0, 0);
