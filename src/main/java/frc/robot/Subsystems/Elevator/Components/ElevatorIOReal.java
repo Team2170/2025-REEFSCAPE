@@ -37,6 +37,7 @@ public class ElevatorIOReal implements ElevatorIO {
 
   public ElevatorIOReal(int motorID, int motorFollowerId, String canbus, int encoderID) {
     leftMotor = new TalonFX(motorID, canbus);
+    rightMotor = new TalonFX(motorFollowerId, canbus);
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
     rightMotor.getConfigurator().apply(motorConfig); // reset to factory default
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -54,7 +55,6 @@ public class ElevatorIOReal implements ElevatorIO {
     motorConfig.Slot0.kG = 0;
     leftMotor.getConfigurator().apply(motorConfig);
 
-    rightMotor = new TalonFX(motorFollowerId, canbus);
     motorConfig = new TalonFXConfiguration();
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
