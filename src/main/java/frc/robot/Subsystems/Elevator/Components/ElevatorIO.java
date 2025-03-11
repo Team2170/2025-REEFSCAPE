@@ -40,4 +40,21 @@ public interface ElevatorIO {
   public default double averagedPosition() {
     return 0.0;
   }
+<<<<<<< HEAD
 }
+=======
+
+  public default void setPercentOutput(double percent){
+
+  }
+  public default void stop(){
+
+  }
+  public default void hold(double hold){
+    
+  }
+  public default double averagedPosition(){
+    return 0.0;
+  }
+}
+>>>>>>> 9ffdd3ca3a5c258b4be2b0ffa522dfdbd3388ecd

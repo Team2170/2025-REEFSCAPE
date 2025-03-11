@@ -81,6 +81,7 @@ public class ElevatorIOSim implements ElevatorIO {
     rightMotor.setControl(positionRequest.withPosition(state.pos.getRotations()));
   }
 
+<<<<<<< HEAD
   public void setPercentOutput(double percent) {
     leftMotor.set(percent);
     rightMotor.set(percent);
@@ -90,3 +91,16 @@ public class ElevatorIOSim implements ElevatorIO {
 
   public void hold(double hold) {}
 }
+=======
+  public void setPercentOutput(double percent){
+    motor.set(percent);
+  }
+
+  public void stop(){
+
+  }
+  public void hold(double hold){
+    
+  }
+}
+>>>>>>> 9ffdd3ca3a5c258b4be2b0ffa522dfdbd3388ecd
