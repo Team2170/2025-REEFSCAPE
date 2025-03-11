@@ -1,9 +1,7 @@
 package frc.robot.Subsystems.Elevator.Components;
 
 import com.ctre.phoenix6.signals.ControlModeValue;
-import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.Subsystems.Elevator.Utility.ElevatorState;
-
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorIO {
@@ -11,26 +9,40 @@ public interface ElevatorIO {
   @AutoLog
   public static class ElevatorIOInputs {
     public ElevatorState state = ElevatorState.UNKNOWN;
-    public Rotation2d rotPosition = Rotation2d.kZero;
-    public double positionRotations = 0;
-    public double velocityRotPerSec = -1;
-    public double torqueCurrentAmps = -1;
-    public double positionPercent = -1;
-    public double heightMeters = -1;
-    /** is the elevator at its desired state? */
-    public boolean aligned = false;
-
-    public ControlModeValue controlMode = ControlModeValue.DisabledOutput;
-
-    public boolean motorConnected = false;
-    public boolean encoderConnected = false;
+    // LEFT INPUTS
+    public double leftTorqueCurrentAmps = -1;
+    public double leftPositionRotations = 0;
+    public double leftVelocityRotPerSec = -1;
+    public boolean leftMotorConnected = false;
+    public boolean leftEncoderConnected = false;
+    public ControlModeValue leftControlMode = ControlModeValue.DisabledOutput;
+    public double leftPositionError = -1;
+    // LEFT INPUTS
+    public double rightTorqueCurrentAmps = -1;
+    public double rightPositionRotations = 0;
+    public double rightVelocityRotPerSec = -1;
+    public boolean rightMotorConnected = false;
+    public boolean rightEncoderConnected = false;
+    public ControlModeValue rightControlMode = ControlModeValue.DisabledOutput;
+    public double rightPositionError = -1;
   }
 
-  public default void updateInputs(ElevatorIOInputs inputs) {
-  }
+  public default void updateInputs(ElevatorIOInputs inputs) {}
 
-  public default void setDesiredState(ElevatorState state) {
+  public default void setDesiredState(ElevatorState state) {}
+
+  public default void setPercentOutput(double percent) {}
+
+  public default void stop() {}
+
+  public default void hold(double hold) {}
+
+  public default double averagedPosition() {
+    return 0.0;
   }
+<<<<<<< HEAD
+}
+=======
 
   public default void setPercentOutput(double percent){
 
@@ -45,3 +57,4 @@ public interface ElevatorIO {
     return 0.0;
   }
 }
+>>>>>>> 9ffdd3ca3a5c258b4be2b0ffa522dfdbd3388ecd
