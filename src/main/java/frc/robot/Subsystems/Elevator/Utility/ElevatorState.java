@@ -7,20 +7,12 @@ import edu.wpi.first.units.measure.Distance;
 import frc.robot.Subsystems.Elevator.Elevator;
 
 public enum ElevatorState {
-<<<<<<< HEAD
   UNKNOWN(Rotation2d.fromRotations(0)), // picking up coral with the end effector
   CORAL_L1(Rotation2d.fromRotations(0)), // elevator pos doesnt matter for score or prep
   CORAL_L2(Rotation2d.fromRotations(-150)),
   CORAL_L3(Rotation2d.fromRotations(2)),
   CORAL_L4(Rotation2d.fromRotations(3));
 
-=======
-    UNKNOWN(Rotation2d.fromRotations(0)), // picking up coral with the end effector
-    CORAL_L1(Rotation2d.fromRotations(0)), // elevator pos doesnt matter for score or prep
-    CORAL_L2(Rotation2d.fromRotations(-150)),
-    CORAL_L3(Rotation2d.fromRotations(2)),
-    CORAL_L4(Rotation2d.fromRotations(3));
->>>>>>> 9ffdd3ca3a5c258b4be2b0ffa522dfdbd3388ecd
   ElevatorState(Rotation2d pos) {
     this.pos = pos;
     heightMeters = pos.getRotations() * Elevator.METERS_PER_ROTATION;

@@ -16,7 +16,7 @@
     "offset": 0.1816,
     "inverted": false
   },
-  "manufacturer":"sds",
+  "manufacturer": "sds",
   "type": "mk4i",
   "level": "L2",
   "wheelCircumference": 4.00,
@@ -28,6 +28,6 @@
   "driveCurrentThreshold": 60,
   "driveCurrentThresholdTime": 0.1,
   "driveEnableCurrentLimit": true,
-  "openLoopRamp":0.25,
-  "closedLoopRamp":0.0
+  "openLoopRamp": 0.25,
+  "closedLoopRamp": 0.0
 }

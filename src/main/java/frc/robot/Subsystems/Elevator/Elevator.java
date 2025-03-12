@@ -50,11 +50,7 @@ public class Elevator extends SubsystemBase {
     io.setDesiredState(desiredState);
   }
 
-<<<<<<< HEAD
   public void setPercentOutput(double percent) {
-=======
-  public void setPercentOutput(double percent){
->>>>>>> 9ffdd3ca3a5c258b4be2b0ffa522dfdbd3388ecd
     io.setPercentOutput(percent);
   }
 
@@ -69,26 +65,4 @@ public class Elevator extends SubsystemBase {
   public void hold(double hold) {
     io.hold(hold);
   }
-<<<<<<< HEAD
 }
-=======
-
-  /**
-   * @param distance
-   * @return a {@code Rotation2d} containing the number of rotations necessary to acheive {@code
-   *     distance} units of travel, this is useful for adjusting setpoints in a more semantically
-   *     meaningful way, i.e. if a setpoint is an inch off, you can add {@code
-   *     distanceToElevatorRotations(Inches.of(1))} to it
-   */
-  public static Rotation2d distanceToElevatorRotations(Distance distance) {
-    return Rotation2d.fromRotations(distance.in(Meters) * ROTATIONS_PER_METER);
-  }
-
-  public void stop(){
-    io.stop();
-  }
-  public void hold(double hold){
-    io.hold(hold);
-  }
-}
->>>>>>> 9ffdd3ca3a5c258b4be2b0ffa522dfdbd3388ecd
