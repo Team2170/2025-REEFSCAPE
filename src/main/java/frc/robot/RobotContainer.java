@@ -181,6 +181,8 @@ public class RobotContainer {
             drive,
             () -> controller.getLeftY(),
             () -> controller.getLeftX(),
+            () -> controller.getLeftTriggerAxis(),
+            () -> controller.getRightTriggerAxis(),
             () -> -controller.getRightX(),
             controller.a()));
 

@@ -34,6 +34,9 @@ public class ElevatorIOReal implements ElevatorIO {
 
   private ElevatorState desiredState = ElevatorState.UNKNOWN;
 
+  public double leftOffset = 0; // In Rotations
+  public double rightOffset = 0; // In Rotations
+
   public ElevatorIOReal(int motorID, int motorFollowerId, String canbus, int encoderID) {
     leftMotor = new TalonFX(motorID, canbus);
     rightMotor = new TalonFX(motorFollowerId, canbus);
@@ -49,6 +52,11 @@ public class ElevatorIOReal implements ElevatorIO {
     motorConfig.Slot0.kD = 0;
     motorConfig.Slot0.kS = 0;
     motorConfig.Slot0.kG = 0;
+    /* Open and Closed Loop Ramping */
+    motorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
+    motorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.25;
+    motorConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.0;
+    motorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
     leftMotor.getConfigurator().apply(motorConfig);
     motorConfig = new TalonFXConfiguration();
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -61,18 +69,22 @@ public class ElevatorIOReal implements ElevatorIO {
     motorConfig.Slot0.kD = 0;
     motorConfig.Slot0.kS = 0;
     motorConfig.Slot0.kG = 0;
+    motorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
+    motorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.25;
+    motorConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.0;
+    motorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.0;
     rightMotor.getConfigurator().apply(motorConfig);
 
     mLeftEncoder = new CANcoder(Constants.ElevatorConstants.elevatorMasterCancoderId);
     CANcoderConfiguration leftEncoderConfig = new CANcoderConfiguration();
     leftEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    leftEncoderConfig.MagnetSensor.MagnetOffset = 0.20874; // TODO find this
+    leftEncoderConfig.MagnetSensor.MagnetOffset = leftOffset; // TODO find this
     mLeftEncoder.getConfigurator().apply(leftEncoderConfig);
 
     mRightEncoder = new CANcoder(Constants.ElevatorConstants.elevatorFollowerCancoderId);
     CANcoderConfiguration rightEncoderConfig = new CANcoderConfiguration();
     rightEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    rightEncoderConfig.MagnetSensor.MagnetOffset = 0.20874; // TODO find this
+    rightEncoderConfig.MagnetSensor.MagnetOffset = rightOffset; // TODO find this
     mRightEncoder.getConfigurator().apply(rightEncoderConfig);
   }
 
@@ -81,7 +93,8 @@ public class ElevatorIOReal implements ElevatorIO {
     // Left Logging Values
     inputs.leftTorqueCurrentAmps = leftMotor.getTorqueCurrent().getValueAsDouble();
     inputs.leftPositionRotations =
-        Rotation2d.fromRotations(mLeftEncoder.getPosition().getValueAsDouble()).getRotations();
+        Rotation2d.fromRotations(mLeftEncoder.getPosition().getValueAsDouble() - leftOffset)
+            .getRotations();
     inputs.leftVelocityRotPerSec = leftMotor.getVelocity().getValueAsDouble();
     inputs.leftMotorConnected = leftMotor.isConnected();
     inputs.leftEncoderConnected = mLeftEncoder.isConnected();
@@ -90,7 +103,8 @@ public class ElevatorIOReal implements ElevatorIO {
     // Right Logging Values
     inputs.rightTorqueCurrentAmps = rightMotor.getTorqueCurrent().getValueAsDouble();
     inputs.rightPositionRotations =
-        Rotation2d.fromRotations(mRightEncoder.getPosition().getValueAsDouble()).getRotations();
+        Rotation2d.fromRotations(mRightEncoder.getPosition().getValueAsDouble() - rightOffset)
+            .getRotations();
     inputs.rightVelocityRotPerSec = rightMotor.getVelocity().getValueAsDouble();
     inputs.rightMotorConnected = rightMotor.isConnected();
     inputs.rightEncoderConnected = mRightEncoder.isConnected();

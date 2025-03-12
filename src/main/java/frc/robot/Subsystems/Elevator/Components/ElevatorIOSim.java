@@ -25,6 +25,10 @@ public class ElevatorIOSim implements ElevatorIO {
   private TalonFXSimState mMotorSim;
   private ElevatorSim elevatorSim;
   private ElevatorState desiredState = ElevatorState.UNKNOWN;
+
+  public double leftOffset = 0; // In Rotations
+  public double rightOffset = 0; // In Rotations
+
   private MotionMagicTorqueCurrentFOC positionRequest = new MotionMagicTorqueCurrentFOC(0);
 
   public ElevatorIOSim(int motorID, int motorFollowerId, String canbus, int encoderID) {
@@ -58,7 +62,8 @@ public class ElevatorIOSim implements ElevatorIO {
     // Left Logging Values
     inputs.leftTorqueCurrentAmps = leftMotor.getTorqueCurrent().getValueAsDouble();
     inputs.leftPositionRotations =
-        Rotation2d.fromRotations(mLeftEncoder.getPosition().getValueAsDouble()).getRotations();
+        Rotation2d.fromRotations(mLeftEncoder.getPosition().getValueAsDouble() - leftOffset)
+            .getRotations();
     inputs.leftVelocityRotPerSec = leftMotor.getVelocity().getValueAsDouble();
     inputs.leftMotorConnected = leftMotor.isConnected();
     inputs.leftEncoderConnected = mLeftEncoder.isConnected();
@@ -67,7 +72,8 @@ public class ElevatorIOSim implements ElevatorIO {
     // Right Logging Values
     inputs.rightTorqueCurrentAmps = rightMotor.getTorqueCurrent().getValueAsDouble();
     inputs.rightPositionRotations =
-        Rotation2d.fromRotations(mRightEncoder.getPosition().getValueAsDouble()).getRotations();
+        Rotation2d.fromRotations(mRightEncoder.getPosition().getValueAsDouble() - rightOffset)
+            .getRotations();
     inputs.rightVelocityRotPerSec = rightMotor.getVelocity().getValueAsDouble();
     inputs.rightMotorConnected = rightMotor.isConnected();
     inputs.rightEncoderConnected = mRightEncoder.isConnected();
