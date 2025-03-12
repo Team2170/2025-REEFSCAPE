@@ -177,7 +177,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
-        DriveCommands.JoystickDrive(
+        DriveCommands.JoystickLimitedDrive(
             drive,
             () -> controller.getLeftY(),
             () -> controller.getLeftX(),
