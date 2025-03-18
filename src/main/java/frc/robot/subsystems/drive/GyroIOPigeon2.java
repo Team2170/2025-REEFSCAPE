@@ -78,4 +78,11 @@ public class GyroIOPigeon2 implements GyroIO {
     pitchPositionQueue.clear();
     rollPositionQueue.clear();
   }
+
+  public void flip() {
+    Rotation2d yaw =
+        Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble())
+            .plus(Rotation2d.fromDegrees(180));
+    pigeon.setYaw(yaw.getDegrees());
+  }
 }

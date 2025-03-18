@@ -209,6 +209,6 @@ public final class Constants {
   }
 
   public static final class ClimberConstants {
-    public static final int climberMotorId = 31;
+    public static final int climberMotorId = 29;
   }
 }

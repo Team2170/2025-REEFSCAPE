@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -30,7 +31,7 @@ public class ElevatorIOReal implements ElevatorIO {
   private CANcoder mRightEncoder;
 
   // create a Motion Magic request, voltage output
-  final PositionDutyCycle positionRequest = new PositionDutyCycle(0);
+  final PositionDutyCycle positionRequest = new PositionDutyCycle(0).withVelocity(2);
 
   private ElevatorState desiredState = ElevatorState.UNKNOWN;
 
@@ -44,14 +45,17 @@ public class ElevatorIOReal implements ElevatorIO {
     rightMotor.getConfigurator().apply(motorConfig); // reset to factory default
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    motorConfig.CurrentLimits.StatorCurrentLimit = 120;
+    motorConfig.CurrentLimits.StatorCurrentLimit = 35;
     motorConfig.Feedback.RotorToSensorRatio = GEAR_RATIO;
+    motorConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
     motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    motorConfig.Slot0.kP = 1;
+
+    motorConfig.Slot0.kP = 0.5;
     motorConfig.Slot0.kI = 0;
     motorConfig.Slot0.kD = 0;
     motorConfig.Slot0.kS = 0;
     motorConfig.Slot0.kG = 0;
+    motorConfig.MotorOutput.PeakForwardDutyCycle = 0.3;
     /* Open and Closed Loop Ramping */
     motorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
     motorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.25;
@@ -61,10 +65,10 @@ public class ElevatorIOReal implements ElevatorIO {
     motorConfig = new TalonFXConfiguration();
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    motorConfig.CurrentLimits.StatorCurrentLimit = 120;
+    motorConfig.CurrentLimits.StatorCurrentLimit = 35;
     motorConfig.Feedback.RotorToSensorRatio = GEAR_RATIO;
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    motorConfig.Slot0.kP = 1;
+    motorConfig.Slot0.kP = 0.5;
     motorConfig.Slot0.kI = 0;
     motorConfig.Slot0.kD = 0;
     motorConfig.Slot0.kS = 0;

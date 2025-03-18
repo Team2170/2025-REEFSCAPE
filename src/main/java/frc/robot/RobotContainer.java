@@ -14,6 +14,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -21,9 +22,11 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Constants;
+import frc.robot.Subsystems.Climber.Climber;
+import frc.robot.Subsystems.Climber.Components.ClimberIOReal;
 import frc.robot.Subsystems.CoralGrabber.Components.CoralGrabberIOReal;
 import frc.robot.Subsystems.CoralGrabber.CoralGrabber;
 import frc.robot.Subsystems.Elevator.Components.ElevatorIOReal;
@@ -35,7 +38,6 @@ import frc.robot.Subsystems.drive.GyroIOPigeon2;
 import frc.robot.Subsystems.drive.ModuleIO;
 import frc.robot.Subsystems.drive.ModuleIOSim;
 import frc.robot.Subsystems.drive.ModuleIOTalonFX;
-import frc.robot.commands.CharacterizationCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -51,6 +53,7 @@ public class RobotContainer {
   public final Elevator elevator;
   public final CoralGrabber shooter;
   private final Drive drive;
+  private final Climber climber;
   //   private final Vision limelight_frontleft;
   //   private final Vision limelight_frontright;
   //   private final Vision limelight_backleft;
@@ -120,6 +123,9 @@ public class RobotContainer {
         // limelight_backcenter = new Vision(drive, new VisionIO() {});
         // limelight_backleft = new Vision(drive, new VisionIO() {});
         // limelight_backright = new Vision(drive, new VisionIO() {});
+        // NamedCommands.registerCommand("flipGyro", new InstantCommand(() -> drive.getPose()));
+        // KYLE WAS HERE
+
         break;
     }
 
@@ -127,22 +133,22 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization",
-        CharacterizationCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization",
-        CharacterizationCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive Wheel Radius Characterization",
+    //     CharacterizationCommands.wheelRadiusCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive Simple FF Characterization",
+    //     CharacterizationCommands.feedforwardCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Forward)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Reverse)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     elevator =
         new Elevator(
@@ -157,6 +163,15 @@ public class RobotContainer {
             new CoralGrabberIOReal(
                 Constants.CoralGrabberConstants.coralGrabberMotorId, "rio", "rio"));
     operator = new CommandXboxController(1);
+    climber = new Climber("climber", new ClimberIOReal());
+
+    NamedCommands.registerCommand(
+        "elevate",
+        new RepeatCommand(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)))
+            .withTimeout(1));
+    NamedCommands.registerCommand(
+        "shoot",
+        new RepeatCommand(new InstantCommand(() -> shooter.setIntakeSpeed(0.3))).withTimeout(1));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -187,7 +202,7 @@ public class RobotContainer {
             controller.a()));
 
     // Switch to X pattern when X button is pressed
-    controller.y().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
     controller
@@ -210,10 +225,6 @@ public class RobotContainer {
         .whileTrue(new InstantCommand(() -> elevator.setPercentOutput(-elevator.PERCENT_OUTPUT)))
         .onFalse(holdElevatorPosition);
     operator
-        .x()
-        .whileTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)))
-        .onFalse(holdElevatorPosition);
-    operator
         .a()
         .whileTrue(new InstantCommand(() -> shooter.setIntakeSpeed(-0.30)))
         .onFalse(new InstantCommand(() -> shooter.setIntakeSpeed(0)));
@@ -222,6 +233,23 @@ public class RobotContainer {
         .b()
         .whileTrue(new InstantCommand(() -> shooter.setIntakeSpeed(0.17)))
         .onFalse(new InstantCommand(() -> shooter.setIntakeSpeed(0)));
+
+    operator
+        .y()
+        .whileTrue(new InstantCommand(() -> climber.setPercentOut(0.5)))
+        .onFalse(new InstantCommand(() -> climber.setPercentOut(0)));
+
+    operator
+        .x()
+        .whileTrue(new InstantCommand(() -> climber.setPercentOut(-0.25)))
+        .onFalse(new InstantCommand(() -> climber.setPercentOut(0)));
+
+    operator
+        .povLeft()
+        .onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)))
+        .onFalse(new InstantCommand(() -> elevator.stop()));
+
+    // controller.y().onTrue(new InstantCommand(() -> drive.flipGyro()));
   }
 
   /**

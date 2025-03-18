@@ -217,6 +217,9 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+
+    // Flip Gyro
+    // gyroIO.flip(); KYLE WAS HERE
   }
 
   /**

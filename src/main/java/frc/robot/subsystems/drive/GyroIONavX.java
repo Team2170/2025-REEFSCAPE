@@ -58,4 +58,6 @@ public class GyroIONavX implements GyroIO {
     pitchPositionQueue.clear();
     rollPositionQueue.clear();
   }
+
+  public void flip() {}
 }

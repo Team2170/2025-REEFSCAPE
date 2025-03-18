@@ -30,7 +30,7 @@ public class ClimberIOReal implements ClimberIO {
   public void configMotor() {
     TalonFXConfiguration internalConfig = new TalonFXConfiguration();
     internalConfig.MotorOutput.withInverted(InvertedValue.CounterClockwise_Positive);
-    internalConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast);
+    internalConfig.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
     internalConfig.Feedback.withSensorToMechanismRatio(GEAR_RATIO);
     internalConfig.CurrentLimits.withStatorCurrentLimit(120);
     internalConfig.CurrentLimits.withStatorCurrentLimitEnable(true);
