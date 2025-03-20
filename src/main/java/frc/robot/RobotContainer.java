@@ -21,12 +21,21 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Constants;
+import frc.robot.Constants.Constants.Limelight_BackLeftConstants;
+import frc.robot.Constants.Constants.Limelight_BackRightConstants;
+import frc.robot.Constants.Constants.Limelight_FrontLeftConstants;
+import frc.robot.Constants.Constants.Limelight_FrontRightConstants;
+import frc.robot.Subsystems.CoralGrabber.Components.CoralGrabberIO;
 import frc.robot.Subsystems.CoralGrabber.Components.CoralGrabberIOReal;
+import frc.robot.Subsystems.CoralGrabber.Components.CoralGrabberIOSim;
 import frc.robot.Subsystems.CoralGrabber.CoralGrabber;
+import frc.robot.Subsystems.Elevator.Components.ElevatorIO;
 import frc.robot.Subsystems.Elevator.Components.ElevatorIOReal;
+import frc.robot.Subsystems.Elevator.Components.ElevatorIOSim;
 import frc.robot.Subsystems.Elevator.Elevator;
 import frc.robot.Subsystems.Elevator.Utility.ElevatorState;
 import frc.robot.Subsystems.drive.Drive;
@@ -35,6 +44,9 @@ import frc.robot.Subsystems.drive.GyroIOPigeon2;
 import frc.robot.Subsystems.drive.ModuleIO;
 import frc.robot.Subsystems.drive.ModuleIOSim;
 import frc.robot.Subsystems.drive.ModuleIOTalonFX;
+import frc.robot.Subsystems.vision.Vision;
+import frc.robot.Subsystems.vision.VisionIO;
+import frc.robot.Subsystems.vision.VisionIOLimelight;
 import frc.robot.commands.CharacterizationCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -51,11 +63,10 @@ public class RobotContainer {
   public final Elevator elevator;
   public final CoralGrabber shooter;
   private final Drive drive;
-  //   private final Vision limelight_frontleft;
-  //   private final Vision limelight_frontright;
-  //   private final Vision limelight_backleft;
-  //   private final Vision limelight_backcenter;
-  //   private final Vision limelight_backright;
+  private final Vision limelight_frontleft;
+  private final Vision limelight_frontright;
+  private final Vision limelight_backleft;
+  private final Vision limelight_backright;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -76,17 +87,26 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-
-        // limelight_frontleft =
-        //     new Vision(drive, new VisionIOLimelight(Limelight_FrontLeftConstants.constants));
-        // limelight_frontright =
-        //     new Vision(drive, new VisionIOLimelight(Limelight_FrontRightConstants.constants));
-        // limelight_backcenter =
-        //     new Vision(drive, new VisionIOLimelight(Limelight_BackCenterConstants.constants));
-        // limelight_backleft =
-        //     new Vision(drive, new VisionIOLimelight(Limelight_BackLeftConstants.constants));
-        // limelight_backright =
-        //     new Vision(drive, new VisionIOLimelight(Limelight_BackRightConstants.constants));
+        elevator =
+            new Elevator(
+                new ElevatorIOReal(
+                    Constants.ElevatorConstants.elevatorMasterId,
+                    Constants.ElevatorConstants.elevatorFollowerId,
+                    Constants.ElevatorConstants.canbus,
+                    Constants.ElevatorConstants.elevatorMasterCancoderId));
+        shooter =
+            new CoralGrabber(
+                "Shooter",
+                new CoralGrabberIOReal(
+                    Constants.CoralGrabberConstants.coralGrabberMotorId, "rio", "rio"));
+        limelight_frontleft =
+            new Vision(drive, new VisionIOLimelight(Limelight_FrontLeftConstants.constants));
+        limelight_frontright =
+            new Vision(drive, new VisionIOLimelight(Limelight_FrontRightConstants.constants));
+        limelight_backleft =
+            new Vision(drive, new VisionIOLimelight(Limelight_BackLeftConstants.constants));
+        limelight_backright =
+            new Vision(drive, new VisionIOLimelight(Limelight_BackRightConstants.constants));
         break;
 
       case SIM:
@@ -98,11 +118,22 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        // limelight_frontleft = new Vision(drive, new VisionIO() {});
-        // limelight_frontright = new Vision(drive, new VisionIO() {});
-        // limelight_backcenter = new Vision(drive, new VisionIO() {});
-        // limelight_backleft = new Vision(drive, new VisionIO() {});
-        // limelight_backright = new Vision(drive, new VisionIO() {});
+        elevator =
+            new Elevator(
+                new ElevatorIOSim(
+                    Constants.ElevatorConstants.elevatorMasterId,
+                    Constants.ElevatorConstants.elevatorFollowerId,
+                    Constants.ElevatorConstants.canbus,
+                    Constants.ElevatorConstants.elevatorMasterCancoderId));
+        shooter =
+            new CoralGrabber(
+                "Shooter",
+                new CoralGrabberIOSim(
+                    Constants.CoralGrabberConstants.coralGrabberMotorId, "rio", "rio"));
+        limelight_frontleft = new Vision(drive, new VisionIO() {});
+        limelight_frontright = new Vision(drive, new VisionIO() {});
+        limelight_backleft = new Vision(drive, new VisionIO() {});
+        limelight_backright = new Vision(drive, new VisionIO() {});
         break;
 
       default:
@@ -115,11 +146,13 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        // limelight_frontleft = new Vision(drive, new VisionIO() {});
-        // limelight_frontright = new Vision(drive, new VisionIO() {});
+        elevator = new Elevator(new ElevatorIO() {});
+        shooter = new CoralGrabber("Shooter", new CoralGrabberIO() {});
+        limelight_frontleft = new Vision(drive, new VisionIO() {});
+        limelight_frontright = new Vision(drive, new VisionIO() {});
         // limelight_backcenter = new Vision(drive, new VisionIO() {});
-        // limelight_backleft = new Vision(drive, new VisionIO() {});
-        // limelight_backright = new Vision(drive, new VisionIO() {});
+        limelight_backleft = new Vision(drive, new VisionIO() {});
+        limelight_backright = new Vision(drive, new VisionIO() {});
         break;
     }
 
@@ -144,18 +177,6 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    elevator =
-        new Elevator(
-            new ElevatorIOReal(
-                Constants.ElevatorConstants.elevatorMasterId,
-                Constants.ElevatorConstants.elevatorFollowerId,
-                Constants.ElevatorConstants.canbus,
-                Constants.ElevatorConstants.elevatorMasterCancoderId));
-    shooter =
-        new CoralGrabber(
-            "Shooter",
-            new CoralGrabberIOReal(
-                Constants.CoralGrabberConstants.coralGrabberMotorId, "rio", "rio"));
     operator = new CommandXboxController(1);
 
     // Configure the button bindings
@@ -163,8 +184,10 @@ public class RobotContainer {
   }
 
   public void periodic() {
-    // limelight_fl.periodic();
-    // limelight_fr.periodic();
+    // limelight_frontleft.periodic();
+    // limelight_frontright.periodic();
+    // limelight_backleft.periodic();
+    // limelight_backright.periodic();
     elevator.periodic();
   }
 
@@ -222,6 +245,36 @@ public class RobotContainer {
         .b()
         .whileTrue(new InstantCommand(() -> shooter.setIntakeSpeed(0.17)))
         .onFalse(new InstantCommand(() -> shooter.setIntakeSpeed(0)));
+
+    // Simulation with keyboard only!!!!
+    new CommandJoystick(2)
+        .button(1)
+        .whileTrue(new InstantCommand(() -> elevator.setState(ElevatorState.STOW)))
+        .onFalse(holdElevatorPosition);
+    new CommandJoystick(2)
+        .button(2)
+        .whileTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L1)))
+        .onFalse(holdElevatorPosition);
+    new CommandJoystick(2)
+        .button(3)
+        .whileTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)))
+        .onFalse(holdElevatorPosition);
+    new CommandJoystick(2)
+        .button(4)
+        .whileTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L3)))
+        .onFalse(holdElevatorPosition);
+    new CommandJoystick(2)
+        .button(5)
+        .whileTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L4)))
+        .onFalse(holdElevatorPosition);
+    new CommandJoystick(2)
+        .button(6)
+        .whileTrue(new InstantCommand(() -> elevator.setPercentOutput(elevator.PERCENT_OUTPUT)))
+        .onFalse(holdElevatorPosition);
+    new CommandJoystick(2)
+        .button(7)
+        .whileTrue(new InstantCommand(() -> elevator.setPercentOutput(-elevator.PERCENT_OUTPUT)))
+        .onFalse(holdElevatorPosition);
   }
 
   /**

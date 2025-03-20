@@ -8,10 +8,12 @@ import frc.robot.Subsystems.Elevator.Elevator;
 
 public enum ElevatorState {
   UNKNOWN(Rotation2d.fromRotations(0)), // picking up coral with the end effector
-  CORAL_L1(Rotation2d.fromRotations(0)), // elevator pos doesnt matter for score or prep
+  INTAKE(Rotation2d.fromRotations(-20)), // picking up coral from the intake
+  STOW(Rotation2d.fromRotations(0)), // Completely Stow Intake
+  CORAL_L1(Rotation2d.fromRotations(-100)), // elevator pos doesnt matter for score or prep
   CORAL_L2(Rotation2d.fromRotations(-150)),
-  CORAL_L3(Rotation2d.fromRotations(2)),
-  CORAL_L4(Rotation2d.fromRotations(3));
+  CORAL_L3(Rotation2d.fromRotations(-200)),
+  CORAL_L4(Rotation2d.fromRotations(-250));
 
   ElevatorState(Rotation2d pos) {
     this.pos = pos;

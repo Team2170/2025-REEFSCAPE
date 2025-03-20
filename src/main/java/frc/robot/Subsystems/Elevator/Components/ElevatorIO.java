@@ -9,6 +9,7 @@ public interface ElevatorIO {
   @AutoLog
   public static class ElevatorIOInputs {
     public ElevatorState state = ElevatorState.UNKNOWN;
+    public double targetRotations = 0;
     // LEFT INPUTS
     public double leftTorqueCurrentAmps = -1;
     public double leftPositionRotations = 0;

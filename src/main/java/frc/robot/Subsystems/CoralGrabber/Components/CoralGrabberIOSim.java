@@ -15,12 +15,12 @@ public class CoralGrabberIOSim implements CoralGrabberIO {
   private final DutyCycleOut request;
   private CoralGrabberConfiguration cfg;
 
-  public CoralGrabberIOSim(CoralGrabberConfiguration cfg) {
-    this.cfg = cfg;
-    mMotor = new TalonFX(cfg.motorJson.motorId, cfg.motorJson.motorBus);
+  public CoralGrabberIOSim(int motorId, String motorBus, String sensorBus) {
+    this.cfg = new CoralGrabberConfiguration();
+    mMotor = new TalonFX(motorId, motorBus);
     configMotor();
-    frontSensor = new CANrange(cfg.frontIntakeJson.sensorId, cfg.frontIntakeJson.sensorBus);
-    backSensor = new CANrange(cfg.backIntakeJson.sensorId, cfg.backIntakeJson.sensorBus);
+    // frontSensor = new CANrange(cfg.frontIntakeJson.sensorId, sensorBus);
+    // backSensor = new CANrange(cfg.backIntakeJson.sensorId, sensorBus);
     request = new DutyCycleOut(0).withEnableFOC(true);
   }
 
@@ -33,23 +33,21 @@ public class CoralGrabberIOSim implements CoralGrabberIO {
     TalonFXConfiguration internalConfig = new TalonFXConfiguration();
     internalConfig.MotorOutput.withInverted(InvertedValue.CounterClockwise_Positive);
     internalConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast);
-    internalConfig.Feedback.withSensorToMechanismRatio(cfg.motorJson.motorToGearRatio);
     // internalConfig.Slot0 =
     //     new PidControllerWrapper(new Slot0Configs())
     //         .with_kP(cfg.motorJson.kP)
     //         .with_kI(cfg.motorJson.kI)
     //         .with_kD(cfg.motorJson.kD)
     //         .getSlot0Config();
-    internalConfig.CurrentLimits.withStatorCurrentLimit(cfg.motorJson.statorCurrentLimit);
+    internalConfig.CurrentLimits.withStatorCurrentLimit(20);
     internalConfig.CurrentLimits.withStatorCurrentLimitEnable(true);
     mMotor.getConfigurator().apply(internalConfig);
   }
 
   public void updateInputs(CoralGrabberIOInputs inputs) {
     inputs.intakeVelocity = getVelocity();
-    inputs.frontSensorRange = frontSensor.getDistance().getValueAsDouble();
-    inputs.backSensorRange = backSensor.getDistance().getValueAsDouble();
-    inputs.isIntaked = hasIntaked(inputs.frontSensorRange, inputs.backSensorRange);
+    // inputs.frontSensorRange = frontSensor.getDistance().getValueAsDouble();
+    // inputs.backSensorRange = backSensor.getDistance().getValueAsDouble();
   }
 
   public double getVelocity() {
@@ -58,22 +56,6 @@ public class CoralGrabberIOSim implements CoralGrabberIO {
 
   public void setIntakeSpeed(double speed) {
     mMotor.setControl(request.withOutput(speed));
-  }
-
-  public boolean hasIntaked(double frontRange, double backRange) {
-    boolean isFrontEngaged = isTripped(frontRange, cfg.frontIntakeJson.intakedRange);
-    boolean isBackEngaged = isTripped(backRange, cfg.backIntakeJson.intakedRange);
-    if (isFrontEngaged && isBackEngaged) {
-      return true;
-    }
-    return false;
-  }
-
-  public boolean isTripped(double range, double threshold) {
-    if (range < threshold) {
-      return true;
-    }
-    return false;
   }
 
   public void stopIntake() {
