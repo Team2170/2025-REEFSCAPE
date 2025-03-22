@@ -13,13 +13,13 @@ public enum ElevatorState {
   CORAL_L3(Rotation2d.fromRotations(2)),
   CORAL_L4(Rotation2d.fromRotations(3));
 
+  public Rotation2d pos;
+  public Distance height;
+  public double heightMeters;
+
   ElevatorState(Rotation2d pos) {
     this.pos = pos;
     heightMeters = pos.getRotations() * Elevator.METERS_PER_ROTATION;
     height = Meters.of(heightMeters);
   }
-
-  public Rotation2d pos;
-  public Distance height;
-  public double heightMeters;
 }

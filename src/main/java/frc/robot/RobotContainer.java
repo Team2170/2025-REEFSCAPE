@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.Constants;
+import frc.robot.Controller.CommandReyannController;
+import frc.robot.Controller.ReyannController;
 import frc.robot.Subsystems.Climber.Climber;
 import frc.robot.Subsystems.Climber.Components.ClimberIOReal;
 import frc.robot.Subsystems.CoralGrabber.Components.CoralGrabberIOReal;
@@ -63,7 +65,9 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
-  public final CommandXboxController operator;
+  private final CommandXboxController operator;
+
+  private final CommandReyannController buttonBoard;
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -163,6 +167,7 @@ public class RobotContainer {
             new CoralGrabberIOReal(
                 Constants.CoralGrabberConstants.coralGrabberMotorId, "rio", "rio"));
     operator = new CommandXboxController(1);
+    buttonBoard = new CommandReyannController(2);
     climber = new Climber("climber", new ClimberIOReal());
 
     NamedCommands.registerCommand(
@@ -244,9 +249,29 @@ public class RobotContainer {
         .whileTrue(new InstantCommand(() -> climber.setPercentOut(-0.25)))
         .onFalse(new InstantCommand(() -> climber.setPercentOut(0)));
 
-    operator
-        .povLeft()
+    // operator
+    //     .povLeft()
+    //     .onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)))
+    //     .onFalse(new InstantCommand(() -> elevator.stop()));
+
+    buttonBoard
+        .L1()
+        .onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L1)))
+        .onFalse(new InstantCommand(() -> elevator.stop()));
+
+    buttonBoard
+        .L2()
         .onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)))
+        .onFalse(new InstantCommand(() -> elevator.stop()));
+
+    buttonBoard
+        .L3()
+        .onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L3)))
+        .onFalse(new InstantCommand(() -> elevator.stop()));
+
+    buttonBoard
+        .L4()
+        .onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L4)))
         .onFalse(new InstantCommand(() -> elevator.stop()));
 
     // controller.y().onTrue(new InstantCommand(() -> drive.flipGyro()));
