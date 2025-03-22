@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.Constants;
+import frc.robot.Subsystems.AlgaeRemover.AlgaeRemover;
+import frc.robot.Subsystems.AlgaeRemover.Components.AlgaeRemoverIOReal;
 import frc.robot.Subsystems.Climber.Climber;
 import frc.robot.Subsystems.Climber.Components.ClimberIOReal;
 import frc.robot.Subsystems.CoralGrabber.Components.CoralGrabberIOReal;
@@ -32,6 +34,8 @@ import frc.robot.Subsystems.CoralGrabber.CoralGrabber;
 import frc.robot.Subsystems.Elevator.Components.ElevatorIOReal;
 import frc.robot.Subsystems.Elevator.Elevator;
 import frc.robot.Subsystems.Elevator.Utility.ElevatorState;
+import frc.robot.Subsystems.Funnel.Components.FunnelIOReal;
+import frc.robot.Subsystems.Funnel.Funnel;
 import frc.robot.Subsystems.drive.Drive;
 import frc.robot.Subsystems.drive.GyroIO;
 import frc.robot.Subsystems.drive.GyroIOPigeon2;
@@ -54,6 +58,8 @@ public class RobotContainer {
   public final CoralGrabber shooter;
   private final Drive drive;
   private final Climber climber;
+  private final Funnel funnel;
+  private final AlgaeRemover algaeRemover;
   //   private final Vision limelight_frontleft;
   //   private final Vision limelight_frontright;
   //   private final Vision limelight_backleft;
@@ -164,6 +170,8 @@ public class RobotContainer {
                 Constants.CoralGrabberConstants.coralGrabberMotorId, "rio", "rio"));
     operator = new CommandXboxController(1);
     climber = new Climber("climber", new ClimberIOReal());
+    funnel = new Funnel("Funnel", new FunnelIOReal());
+    algaeRemover = new AlgaeRemover("AlgaeRemover", new AlgaeRemoverIOReal());
 
     NamedCommands.registerCommand(
         "elevate",
@@ -244,10 +252,25 @@ public class RobotContainer {
         .whileTrue(new InstantCommand(() -> climber.setPercentOut(-0.25)))
         .onFalse(new InstantCommand(() -> climber.setPercentOut(0)));
 
+    // operator
+    //     .povLeft()
+    //     .onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)))
+    //     .onFalse(new InstantCommand(() -> elevator.stop()));
+
     operator
-        .povLeft()
-        .onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)))
-        .onFalse(new InstantCommand(() -> elevator.stop()));
+        .povUp()
+        .onTrue(new InstantCommand(() -> funnel.setPercentOut(0.1)))
+        .onFalse(new InstantCommand(() -> funnel.stop()));
+
+    operator
+        .povDown()
+        .onTrue(new InstantCommand(() -> funnel.setPercentOut(-0.1)))
+        .onFalse(new InstantCommand(() -> funnel.stop()));
+
+    operator
+        .povRight()
+        .onTrue(new InstantCommand(() -> algaeRemover.setPercentOut(0.4)))
+        .onFalse(new InstantCommand(() -> algaeRemover.stop()));
 
     // controller.y().onTrue(new InstantCommand(() -> drive.flipGyro()));
   }

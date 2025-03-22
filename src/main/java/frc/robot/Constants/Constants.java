@@ -211,4 +211,12 @@ public final class Constants {
   public static final class ClimberConstants {
     public static final int climberMotorId = 29;
   }
+
+  public static final class FunnelConstants {
+    public static final int funnelMotorId = 31; // TODO: ADD PROPER ID
+  }
+
+  public static final class AlgaeRemoverConstants {
+    public static final int algaeRemoverMotorId = 32; // TODO: ADD PROPER ID
+  }
 }

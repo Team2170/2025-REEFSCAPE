@@ -182,3 +182,7 @@ ctre_sim/
 # clangd
 /.cache
 compile_commands.json
+.gradle/8.11/checksums/checksums.lock
+.gradle/8.11/fileHashes/fileHashes.lock
+.gradle/buildOutputCleanup/buildOutputCleanup.lock
+src/main/java/frc/robot/BuildConstants.java
