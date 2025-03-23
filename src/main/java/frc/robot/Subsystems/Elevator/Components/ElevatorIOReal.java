@@ -35,8 +35,8 @@ public class ElevatorIOReal implements ElevatorIO {
 
   private ElevatorState desiredState = ElevatorState.UNKNOWN;
 
-  public double leftOffset = 0; // In Rotations
-  public double rightOffset = 0; // In Rotations
+  public double leftOffset = -0.4296; // In Rotations
+  public double rightOffset = -0.140869; // In Rotations
 
   public ElevatorIOReal(int motorID, int motorFollowerId, String canbus, int encoderID) {
     leftMotor = new TalonFX(motorID, canbus);
@@ -55,7 +55,13 @@ public class ElevatorIOReal implements ElevatorIO {
     motorConfig.Slot0.kD = 0;
     motorConfig.Slot0.kS = 0;
     motorConfig.Slot0.kG = 0;
-    motorConfig.MotorOutput.PeakForwardDutyCycle = 0.3;
+
+    motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
+    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -80;
+
+    // motorConfig.MotorOutput.PeakForwardDutyCycle = 0.3;
     /* Open and Closed Loop Ramping */
     motorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
     motorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.25;
@@ -73,6 +79,10 @@ public class ElevatorIOReal implements ElevatorIO {
     motorConfig.Slot0.kD = 0;
     motorConfig.Slot0.kS = 0;
     motorConfig.Slot0.kG = 0;
+    motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
+    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -80;
     motorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
     motorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.25;
     motorConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.0;

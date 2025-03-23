@@ -23,8 +23,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.Constants;
+import frc.robot.Controller.CommandReyannController;
 import frc.robot.Subsystems.AlgaeRemover.AlgaeRemover;
 import frc.robot.Subsystems.AlgaeRemover.Components.AlgaeRemoverIOReal;
 import frc.robot.Subsystems.Climber.Climber;
@@ -70,6 +73,9 @@ public class RobotContainer {
   private final CommandXboxController controller = new CommandXboxController(0);
 
   public final CommandXboxController operator;
+
+  private final CommandReyannController buttonBoard;
+
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -173,6 +179,8 @@ public class RobotContainer {
     funnel = new Funnel("Funnel", new FunnelIOReal());
     algaeRemover = new AlgaeRemover("AlgaeRemover", new AlgaeRemoverIOReal());
 
+    buttonBoard = new CommandReyannController(2);
+
     NamedCommands.registerCommand(
         "elevate",
         new RepeatCommand(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)))
@@ -252,9 +260,40 @@ public class RobotContainer {
         .whileTrue(new InstantCommand(() -> climber.setPercentOut(-0.25)))
         .onFalse(new InstantCommand(() -> climber.setPercentOut(0)));
 
-    // operator
-    //     .povLeft()
-    //     .onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)))
+    operator.povLeft().onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)));
+    // .onFalse(new InstantCommand(() -> elevator.stop()));
+
+    Command stop = new InstantCommand(() -> elevator.stop());
+    Command ScoreLevelOne =
+        new SequentialCommandGroup(
+            new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L1)),
+            new RunCommand(() -> shooter.setIntakeSpeed(-0.30)).withTimeout(1.5),
+            new InstantCommand(() -> shooter.setIntakeSpeed(0)),
+            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN)).withTimeout(0.5),
+            new InstantCommand(() -> elevator.stop()));
+    Command ScoreLevelTwo =
+        new SequentialCommandGroup(
+            new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)),
+            new RunCommand(() -> shooter.setIntakeSpeed(-0.30)).withTimeout(1.5),
+            new InstantCommand(() -> shooter.setIntakeSpeed(0)),
+            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN)).withTimeout(0.55),
+            new InstantCommand(() -> elevator.stop()));
+    Command ScoreLevelThree =
+        new SequentialCommandGroup(
+            new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L3)),
+            new RunCommand(() -> shooter.setIntakeSpeed(-0.30)).withTimeout(1.5),
+            new InstantCommand(() -> shooter.setIntakeSpeed(0)),
+            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN)).withTimeout(0.6),
+            new InstantCommand(() -> elevator.stop()));
+
+    buttonBoard.L1().onTrue(ScoreLevelOne);
+    buttonBoard.L2().onTrue(ScoreLevelTwo);
+    buttonBoard.L3().onTrue(ScoreLevelThree);
+    // .onFalse(new InstantCommand(() -> elevator.stop()));
+
+    // buttonBoard
+    //     .L4()
+    //     .onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L4)))
     //     .onFalse(new InstantCommand(() -> elevator.stop()));
 
     operator
