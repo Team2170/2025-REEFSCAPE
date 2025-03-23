@@ -9,16 +9,16 @@ import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.event.EventLoop;
 
 public class ReyannController extends GenericHID implements Sendable {
-    /** Represents a digital button on a Reyann Controller. */
+  /** Represents a digital button on a Reyann Controller. */
   public enum Button {
     /** L1 coral button. */
-    kL1(11),
+    kL1(12),
     /** L2 coral button. */
-    kL2(10),
+    kL2(11),
     /** L3 coral button. */
-    kL3(9),
+    kL3(10),
     /** L4 coral button. */
-    kL4(8);
+    kL4(9);
 
     /** Button value. */
     public final int value;
@@ -83,8 +83,8 @@ public class ReyannController extends GenericHID implements Sendable {
    * Constructs an event instance around the L1 button's digital signal.
    *
    * @param loop the event loop instance to attach the event to.
-   * @return an event instance representing the L1 button's digital signal
-   *     attached to the given loop.
+   * @return an event instance representing the L1 button's digital signal attached to the given
+   *     loop.
    */
   public BooleanEvent L1(EventLoop loop) {
     return button(Button.kL1.value, loop);
@@ -121,8 +121,8 @@ public class ReyannController extends GenericHID implements Sendable {
    * Constructs an event instance around the L2 button's digital signal.
    *
    * @param loop the event loop instance to attach the event to.
-   * @return an event instance representing the L2 button's digital signal
-   *     attached to the given loop.
+   * @return an event instance representing the L2 button's digital signal attached to the given
+   *     loop.
    */
   public BooleanEvent L2(EventLoop loop) {
     return button(Button.kL2.value, loop);
@@ -159,8 +159,8 @@ public class ReyannController extends GenericHID implements Sendable {
    * Constructs an event instance around the L3 button's digital signal.
    *
    * @param loop the event loop instance to attach the event to.
-   * @return an event instance representing the L3 button's digital signal
-   *     attached to the given loop.
+   * @return an event instance representing the L3 button's digital signal attached to the given
+   *     loop.
    */
   public BooleanEvent L3(EventLoop loop) {
     return button(Button.kL3.value, loop);
@@ -197,8 +197,8 @@ public class ReyannController extends GenericHID implements Sendable {
    * Constructs an event instance around the L4 button's digital signal.
    *
    * @param loop the event loop instance to attach the event to.
-   * @return an event instance representing the L4 button's digital signal
-   *     attached to the given loop.
+   * @return an event instance representing the L4 button's digital signal attached to the given
+   *     loop.
    */
   public BooleanEvent L4(EventLoop loop) {
     return button(Button.kL4.value, loop);
