@@ -197,6 +197,10 @@ public class ElevatorIOSim implements ElevatorIO {
         leftPos -= 1;
       }
     }
+
+    if (desiredState.pos.getRotations() == leftPos) {
+    }
+
     rightPos = leftPos;
     rightVel = leftVel;
 
