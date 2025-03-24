@@ -100,6 +100,10 @@ public class ElevatorIOReal implements ElevatorIO {
     rightEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     rightEncoderConfig.MagnetSensor.MagnetOffset = rightOffset; // TODO find this
     mRightEncoder.getConfigurator().apply(rightEncoderConfig);
+
+    // Set the internal encoder to the absolute encoder.
+    rightMotor.setPosition(mRightEncoder.getPosition().getValueAsDouble());
+    leftMotor.setPosition(mLeftEncoder.getPosition().getValueAsDouble());
   }
 
   public void updateInputs(ElevatorIOInputs inputs) {
