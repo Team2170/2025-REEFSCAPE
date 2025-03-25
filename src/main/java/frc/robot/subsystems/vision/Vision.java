@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Subsystems.drive.Drive;
+import frc.robot.Subsystems.vision.LimelightHelpers.PoseEstimate;
 import frc.robot.util.VisionObservation;
 import frc.robot.util.VisionObservation.LLTYPE;
 import java.util.ArrayList;
@@ -118,20 +119,22 @@ public class Vision extends SubsystemBase {
     }
 
     if (inputs.name != "sim") {
-      LimelightHelpers.RawFiducial[] rawTrackedTags =
-          LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(inputs.name).rawFiducials;
-      List<Integer> trackedTagID = new ArrayList<Integer>();
+      PoseEstimate est = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(inputs.name);
+      if (est != null) {
+        LimelightHelpers.RawFiducial[] rawTrackedTags = est.rawFiducials;
+        List<Integer> trackedTagID = new ArrayList<Integer>();
 
-      for (int i = 0; i < rawTrackedTags.length; i++) {
-        trackedTagID.add(rawTrackedTags[i].id);
+        for (int i = 0; i < rawTrackedTags.length; i++) {
+          trackedTagID.add(rawTrackedTags[i].id);
+        }
+
+        Pose2d[] trackedTagPoses = new Pose2d[rawTrackedTags.length];
+        for (int i = 0; i < trackedTagID.size(); i++) {
+          trackedTagPoses[i] = aprilTagFieldLayout.getTagPose(trackedTagID.get(i)).get().toPose2d();
+        }
+
+        Logger.recordOutput("limelight" + inputs.name + "/visionTargets", trackedTagPoses);
       }
-
-      Pose2d[] trackedTagPoses = new Pose2d[rawTrackedTags.length];
-      for (int i = 0; i < trackedTagID.size(); i++) {
-        trackedTagPoses[i] = aprilTagFieldLayout.getTagPose(trackedTagID.get(i)).get().toPose2d();
-      }
-
-      Logger.recordOutput("limelight" + inputs.name + "/visionTargets", trackedTagPoses);
     }
   }
 
@@ -144,7 +147,8 @@ public class Vision extends SubsystemBase {
       LimelightHelpers.SetIMUMode(inputs.name, 1);
       if (DriverStation.getAlliance().isPresent()
           && DriverStation.getAlliance().get() == Alliance.Red) {
-        // io.setRobotOrientationMG2(new Rotation2d(swerve.getRotation().getRadians() + Math.PI));
+        // io.setRobotOrientationMG2(new Rotation2d(swerve.getRotation().getRadians() +
+        // Math.PI));
         Rotation3d gyro = drive.getRotation3d().rotateBy(new Rotation3d(0, 0, Math.PI));
         io.setRobotOrientationMG2(gyro, drive.getRotationRate());
 

@@ -4,9 +4,12 @@
 
 package frc.robot.Subsystems.vision;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.Subsystems.vision.LimelightHelpers.PoseEstimate;
 import frc.robot.util.DSUtil;
 import frc.robot.util.RotationUtil;
 import frc.robot.util.VisionObservation.LLTYPE;
@@ -40,12 +43,52 @@ public class VisionIOLimelight implements VisionIO {
     String llClass = LimelightHelpers.getNeuralClassID(name);
     inputs.tClass = llClass.isEmpty() ? 0 : Double.parseDouble(llClass);
     inputs.name = name;
-    inputs.botPoseMG2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name).pose;
-    inputs.tagCount = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name).tagCount;
-    inputs.avgTagDist = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name).avgTagDist;
-    inputs.botPose3d = LimelightHelpers.getBotPose3d_wpiBlue(name);
-    inputs.timestamp = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name).timestampSeconds;
+    inputs.botPoseMG2 = getBotPoseMg2(name);
+    inputs.tagCount = getTagCount(name);
+    inputs.avgTagDist = getAvgDist(name);
+    inputs.botPose3d = getBotPose3d(name);
+    inputs.timestamp = getTimestamp(name);
     inputs.limelightType = limelightType;
+  }
+
+  public Pose2d getBotPoseMg2(String camName) {
+    PoseEstimate poseEst = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(camName);
+    if (poseEst == null) {
+      return new Pose2d();
+    }
+    return poseEst.pose;
+  }
+
+  public Pose3d getBotPose3d(String camName) {
+    Pose3d poseEst = LimelightHelpers.getBotPose3d_wpiBlue(camName);
+    if (poseEst == null) {
+      return new Pose3d();
+    }
+    return poseEst;
+  }
+
+  public int getTagCount(String camName) {
+    PoseEstimate poseEst = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(camName);
+    if (poseEst == null) {
+      return 0;
+    }
+    return poseEst.tagCount;
+  }
+
+  public double getAvgDist(String camName) {
+    PoseEstimate poseEst = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(camName);
+    if (poseEst == null) {
+      return 0.0;
+    }
+    return poseEst.avgTagDist;
+  }
+
+  public double getTimestamp(String camName) {
+    PoseEstimate poseEst = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(camName);
+    if (poseEst == null) {
+      return 0.0;
+    }
+    return poseEst.timestampSeconds;
   }
 
   @Override

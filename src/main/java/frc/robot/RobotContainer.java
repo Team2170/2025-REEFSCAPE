@@ -27,6 +27,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.Constants;
+import frc.robot.Constants.Constants.Limelight_FrontLeftConstants;
+import frc.robot.Constants.Constants.Limelight_FrontRightConstants;
 import frc.robot.Controller.CommandReyannController;
 import frc.robot.Subsystems.AlgaeRemover.AlgaeRemover;
 import frc.robot.Subsystems.AlgaeRemover.Components.AlgaeRemoverIOReal;
@@ -45,10 +47,9 @@ import frc.robot.Subsystems.drive.GyroIOPigeon2;
 import frc.robot.Subsystems.drive.ModuleIO;
 import frc.robot.Subsystems.drive.ModuleIOSim;
 import frc.robot.Subsystems.drive.ModuleIOTalonFX;
-<<<<<<< Updated upstream
-=======
-import frc.robot.commands.AlignOnReef;
->>>>>>> Stashed changes
+import frc.robot.Subsystems.vision.Vision;
+import frc.robot.Subsystems.vision.VisionIO;
+import frc.robot.Subsystems.vision.VisionIOLimelight;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -67,19 +68,11 @@ public class RobotContainer {
   private final Climber climber;
   private final Funnel funnel;
   private final AlgaeRemover algaeRemover;
-<<<<<<< Updated upstream
-  //   private final Vision limelight_frontleft;
-  //   private final Vision limelight_frontright;
-  //   private final Vision limelight_backleft;
-  //   private final Vision limelight_backcenter;
-=======
-  //   private final AlignOnReef aligner;
-  //   private final Vision limelight_frontleft;
-  //   private final Vision limelight_frontright;
-  //   private final Vision limelight_backleft;
-  //   // private final Vision limelight_backcenter;
->>>>>>> Stashed changes
-  //   private final Vision limelight_backright;
+  private final Vision limelight_frontleft;
+  private final Vision limelight_frontright;
+  // private final Vision limelight_backleft;
+  // private final Vision limelight_backcenter;
+  // private final Vision limelight_backright;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -104,21 +97,19 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        // limelight_frontleft =
-        //     new Vision(drive, new VisionIOLimelight(Limelight_FrontLeftConstants.constants));
-        // limelight_frontright =
-        //     new Vision(drive, new VisionIOLimelight(Limelight_FrontRightConstants.constants));
-<<<<<<< Updated upstream
+        limelight_frontleft =
+            new Vision(drive, new VisionIOLimelight(Limelight_FrontLeftConstants.constants));
+        limelight_frontright =
+            new Vision(drive, new VisionIOLimelight(Limelight_FrontRightConstants.constants));
         // limelight_backcenter =
-        //     new Vision(drive, new VisionIOLimelight(Limelight_BackCenterConstants.constants));
-=======
-        // // limelight_backcenter =
-        // //     new Vision(drive, new VisionIOLimelight(Limelight_BackCenterConstants.constants));
->>>>>>> Stashed changes
+        // new Vision(drive, new
+        // VisionIOLimelight(Limelight_BackCenterConstants.constants));
         // limelight_backleft =
-        //     new Vision(drive, new VisionIOLimelight(Limelight_BackLeftConstants.constants));
+        // new Vision(drive, new
+        // VisionIOLimelight(Limelight_BackLeftConstants.constants));
         // limelight_backright =
-        //     new Vision(drive, new VisionIOLimelight(Limelight_BackRightConstants.constants));
+        // new Vision(drive, new
+        // VisionIOLimelight(Limelight_BackRightConstants.constants));
         break;
 
       case SIM:
@@ -130,13 +121,9 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        // limelight_frontleft = new Vision(drive, new VisionIO() {});
-        // limelight_frontright = new Vision(drive, new VisionIO() {});
-<<<<<<< Updated upstream
+        limelight_frontleft = new Vision(drive, new VisionIO() {});
+        limelight_frontright = new Vision(drive, new VisionIO() {});
         // limelight_backcenter = new Vision(drive, new VisionIO() {});
-=======
-        // // limelight_backcenter = new Vision(drive, new VisionIO() {});
->>>>>>> Stashed changes
         // limelight_backleft = new Vision(drive, new VisionIO() {});
         // limelight_backright = new Vision(drive, new VisionIO() {});
         break;
@@ -151,16 +138,13 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        // limelight_frontleft = new Vision(drive, new VisionIO() {});
-        // limelight_frontright = new Vision(drive, new VisionIO() {});
-<<<<<<< Updated upstream
+        limelight_frontleft = new Vision(drive, new VisionIO() {});
+        limelight_frontright = new Vision(drive, new VisionIO() {});
         // limelight_backcenter = new Vision(drive, new VisionIO() {});
-=======
-        // // limelight_backcenter = new Vision(drive, new VisionIO() {});
->>>>>>> Stashed changes
         // limelight_backleft = new Vision(drive, new VisionIO() {});
         // limelight_backright = new Vision(drive, new VisionIO() {});
-        // NamedCommands.registerCommand("flipGyro", new InstantCommand(() -> drive.getPose()));
+        // NamedCommands.registerCommand("flipGyro", new InstantCommand(() ->
+        // drive.getPose()));
         // KYLE WAS HERE
 
         break;
@@ -171,21 +155,23 @@ public class RobotContainer {
 
     // Set up SysId routines
     // autoChooser.addOption(
-    //     "Drive Wheel Radius Characterization",
-    //     CharacterizationCommands.wheelRadiusCharacterization(drive));
+    // "Drive Wheel Radius Characterization",
+    // CharacterizationCommands.wheelRadiusCharacterization(drive));
     // autoChooser.addOption(
-    //     "Drive Simple FF Characterization",
-    //     CharacterizationCommands.feedforwardCharacterization(drive));
+    // "Drive Simple FF Characterization",
+    // CharacterizationCommands.feedforwardCharacterization(drive));
     // autoChooser.addOption(
-    //     "Drive SysId (Quasistatic Forward)",
-    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // "Drive SysId (Quasistatic Forward)",
+    // drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     // autoChooser.addOption(
-    //     "Drive SysId (Quasistatic Reverse)",
-    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // "Drive SysId (Quasistatic Reverse)",
+    // drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     // autoChooser.addOption(
-    //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // "Drive SysId (Dynamic Forward)",
+    // drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     // autoChooser.addOption(
-    //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // "Drive SysId (Dynamic Reverse)",
+    // drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     elevator =
         new Elevator(
@@ -203,25 +189,6 @@ public class RobotContainer {
     climber = new Climber("climber", new ClimberIOReal());
     funnel = new Funnel("Funnel", new FunnelIOReal());
     algaeRemover = new AlgaeRemover("AlgaeRemover", new AlgaeRemoverIOReal());
-<<<<<<< Updated upstream
-=======
-    // aligner = new AlignOnReef(drive,
-    //  () -> drive.getPose().getX(),
-    //   () -> drive.getPose().getY(), //TODO: Check if GetRadians is the right type
-    //   () -> drive.getRotation().getRadians(), null, null);
-
-    // Code copied from Alex's old code
-    controller
-        .x()
-        .whileTrue(
-            new AlignOnReef(
-                drive,
-                () -> controller.getLeftX(),
-                () -> controller.getLeftY(),
-                () -> controller.getRightX(),
-                () -> controller.povRight().getAsBoolean(),
-                () -> controller.povRight().getAsBoolean()));
->>>>>>> Stashed changes
 
     buttonBoard = new CommandReyannController(2);
 
@@ -238,8 +205,8 @@ public class RobotContainer {
   }
 
   public void periodic() {
-    // limelight_fl.periodic();
-    // limelight_fr.periodic();
+    limelight_frontleft.periodic();
+    limelight_frontright.periodic();
     elevator.periodic();
   }
 
@@ -337,9 +304,9 @@ public class RobotContainer {
     // .onFalse(new InstantCommand(() -> elevator.stop()));
 
     // buttonBoard
-    //     .L4()
-    //     .onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L4)))
-    //     .onFalse(new InstantCommand(() -> elevator.stop()));
+    // .L4()
+    // .onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L4)))
+    // .onFalse(new InstantCommand(() -> elevator.stop()));
 
     operator
         .povUp()
