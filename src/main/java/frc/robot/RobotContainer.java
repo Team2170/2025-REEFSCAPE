@@ -45,6 +45,10 @@ import frc.robot.Subsystems.drive.GyroIOPigeon2;
 import frc.robot.Subsystems.drive.ModuleIO;
 import frc.robot.Subsystems.drive.ModuleIOSim;
 import frc.robot.Subsystems.drive.ModuleIOTalonFX;
+<<<<<<< Updated upstream
+=======
+import frc.robot.commands.AlignOnReef;
+>>>>>>> Stashed changes
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -63,10 +67,18 @@ public class RobotContainer {
   private final Climber climber;
   private final Funnel funnel;
   private final AlgaeRemover algaeRemover;
+<<<<<<< Updated upstream
   //   private final Vision limelight_frontleft;
   //   private final Vision limelight_frontright;
   //   private final Vision limelight_backleft;
   //   private final Vision limelight_backcenter;
+=======
+  //   private final AlignOnReef aligner;
+  //   private final Vision limelight_frontleft;
+  //   private final Vision limelight_frontright;
+  //   private final Vision limelight_backleft;
+  //   // private final Vision limelight_backcenter;
+>>>>>>> Stashed changes
   //   private final Vision limelight_backright;
 
   // Controller
@@ -96,8 +108,13 @@ public class RobotContainer {
         //     new Vision(drive, new VisionIOLimelight(Limelight_FrontLeftConstants.constants));
         // limelight_frontright =
         //     new Vision(drive, new VisionIOLimelight(Limelight_FrontRightConstants.constants));
+<<<<<<< Updated upstream
         // limelight_backcenter =
         //     new Vision(drive, new VisionIOLimelight(Limelight_BackCenterConstants.constants));
+=======
+        // // limelight_backcenter =
+        // //     new Vision(drive, new VisionIOLimelight(Limelight_BackCenterConstants.constants));
+>>>>>>> Stashed changes
         // limelight_backleft =
         //     new Vision(drive, new VisionIOLimelight(Limelight_BackLeftConstants.constants));
         // limelight_backright =
@@ -115,7 +132,11 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
         // limelight_frontleft = new Vision(drive, new VisionIO() {});
         // limelight_frontright = new Vision(drive, new VisionIO() {});
+<<<<<<< Updated upstream
         // limelight_backcenter = new Vision(drive, new VisionIO() {});
+=======
+        // // limelight_backcenter = new Vision(drive, new VisionIO() {});
+>>>>>>> Stashed changes
         // limelight_backleft = new Vision(drive, new VisionIO() {});
         // limelight_backright = new Vision(drive, new VisionIO() {});
         break;
@@ -132,7 +153,11 @@ public class RobotContainer {
                 new ModuleIO() {});
         // limelight_frontleft = new Vision(drive, new VisionIO() {});
         // limelight_frontright = new Vision(drive, new VisionIO() {});
+<<<<<<< Updated upstream
         // limelight_backcenter = new Vision(drive, new VisionIO() {});
+=======
+        // // limelight_backcenter = new Vision(drive, new VisionIO() {});
+>>>>>>> Stashed changes
         // limelight_backleft = new Vision(drive, new VisionIO() {});
         // limelight_backright = new Vision(drive, new VisionIO() {});
         // NamedCommands.registerCommand("flipGyro", new InstantCommand(() -> drive.getPose()));
@@ -178,6 +203,25 @@ public class RobotContainer {
     climber = new Climber("climber", new ClimberIOReal());
     funnel = new Funnel("Funnel", new FunnelIOReal());
     algaeRemover = new AlgaeRemover("AlgaeRemover", new AlgaeRemoverIOReal());
+<<<<<<< Updated upstream
+=======
+    // aligner = new AlignOnReef(drive,
+    //  () -> drive.getPose().getX(),
+    //   () -> drive.getPose().getY(), //TODO: Check if GetRadians is the right type
+    //   () -> drive.getRotation().getRadians(), null, null);
+
+    // Code copied from Alex's old code
+    controller
+        .x()
+        .whileTrue(
+            new AlignOnReef(
+                drive,
+                () -> controller.getLeftX(),
+                () -> controller.getLeftY(),
+                () -> controller.getRightX(),
+                () -> controller.povRight().getAsBoolean(),
+                () -> controller.povRight().getAsBoolean()));
+>>>>>>> Stashed changes
 
     buttonBoard = new CommandReyannController(2);
 
@@ -260,30 +304,31 @@ public class RobotContainer {
         .whileTrue(new InstantCommand(() -> climber.setPercentOut(-0.25)))
         .onFalse(new InstantCommand(() -> climber.setPercentOut(0)));
 
-    operator.povLeft().onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)));
+    // operator.povLeft().onTrue(new InstantCommand(() ->
+    // elevator.setState(ElevatorState.CORAL_L2)));
     // .onFalse(new InstantCommand(() -> elevator.stop()));
 
     Command stop = new InstantCommand(() -> elevator.stop());
     Command ScoreLevelOne =
         new SequentialCommandGroup(
-            new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L1)),
-            new RunCommand(() -> shooter.setIntakeSpeed(-0.30)).withTimeout(1.5),
+            new RunCommand(() -> elevator.setState(ElevatorState.CORAL_L1)).withTimeout(0.30),
+            new RunCommand(() -> shooter.setIntakeSpeed(-0.12)).withTimeout(1.5),
             new InstantCommand(() -> shooter.setIntakeSpeed(0)),
-            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN)).withTimeout(0.5),
+            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN)).withTimeout(0.75),
             new InstantCommand(() -> elevator.stop()));
     Command ScoreLevelTwo =
         new SequentialCommandGroup(
-            new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)),
+            new RunCommand(() -> elevator.setState(ElevatorState.CORAL_L2)).withTimeout(0.4),
             new RunCommand(() -> shooter.setIntakeSpeed(-0.30)).withTimeout(1.5),
             new InstantCommand(() -> shooter.setIntakeSpeed(0)),
-            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN)).withTimeout(0.55),
+            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN)).withTimeout(0.8),
             new InstantCommand(() -> elevator.stop()));
     Command ScoreLevelThree =
         new SequentialCommandGroup(
-            new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L3)),
+            new RunCommand(() -> elevator.setState(ElevatorState.CORAL_L3)).withTimeout(0.75),
             new RunCommand(() -> shooter.setIntakeSpeed(-0.30)).withTimeout(1.5),
             new InstantCommand(() -> shooter.setIntakeSpeed(0)),
-            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN)).withTimeout(0.6),
+            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN)).withTimeout(1.75),
             new InstantCommand(() -> elevator.stop()));
 
     buttonBoard.L1().onTrue(ScoreLevelOne);
@@ -309,6 +354,11 @@ public class RobotContainer {
     operator
         .povRight()
         .onTrue(new InstantCommand(() -> algaeRemover.setPercentOut(0.4)))
+        .onFalse(new InstantCommand(() -> algaeRemover.stop()));
+
+    operator
+        .povLeft()
+        .onTrue(new InstantCommand(() -> algaeRemover.setPercentOut(-0.4)))
         .onFalse(new InstantCommand(() -> algaeRemover.stop()));
 
     // controller.y().onTrue(new InstantCommand(() -> drive.flipGyro()));

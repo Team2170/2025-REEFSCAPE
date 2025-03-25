@@ -13,6 +13,8 @@
 
 package frc.robot.Constants;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.numbers.N3;
@@ -42,6 +44,26 @@ public final class Constants {
     REPLAY
   }
 
+<<<<<<< Updated upstream
+=======
+  public static final class AutoAlignmentConstants {
+    public static final double DEADBAND = 0.1;
+    public static final double ANGLE_KP = .5;
+    public static final double ANGLE_KD = 0;
+    public static final double DRIVE_KPY = 1;
+    public static final double DRIVE_KDY = 0;
+    public static final double DRIVE_KPX = 1;
+    public static final double DRIVE_KDX = 0;
+    public static final double ANGLE_MAX_VELOCITY = 8.0;
+    public static final double ANGLE_MAX_ACCELERATION = 20.0;
+    public static final Distance ALIGN_DISTANCE = Meters.of(.4);
+    public static final double DRIVE_BASE_RADIUS =
+        Math.max(
+            Math.max(Math.hypot(-10.25, 10.25), Math.hypot(10.25, 10.25)),
+            Math.max(Math.hypot(-10.25, -10.25), Math.hypot(10.25, -10.25)));
+  }
+
+>>>>>>> Stashed changes
   public static final class Limelight2Constants {
     public static final double verticalFOV = 49.7; // degrees obviously
     public static final double horizontalFOV = 63.3;
@@ -89,7 +111,11 @@ public final class Constants {
             Limelight4Constants.horPixles,
             visionMeasurementStdDevs);
 
+<<<<<<< Updated upstream
     public static final String ip = "10.1.77.11";
+=======
+    public static final String ip = "10.21.70.19"; // TODO: CHANGE IP TO FIT
+>>>>>>> Stashed changes
   }
 
   public static final class Limelight_FrontRightConstants {
@@ -115,7 +141,11 @@ public final class Constants {
             Limelight4Constants.horPixles,
             visionMeasurementStdDevs);
 
+<<<<<<< Updated upstream
     public static final String ip = "10.1.77.11";
+=======
+    public static final String ip = "10.1.77.11"; // TODO: Change IP To Fit
+>>>>>>> Stashed changes
   }
 
   public static final class Limelight_BackCenterConstants {
@@ -141,7 +171,11 @@ public final class Constants {
             Limelight4Constants.horPixles,
             visionMeasurementStdDevs);
 
+<<<<<<< Updated upstream
     public static final String ip = "10.1.77.11";
+=======
+    public static final String ip = "10.1.77.11"; // TODO: Change IP To Fit
+>>>>>>> Stashed changes
   }
 
   public static final class Limelight_BackLeftConstants {
@@ -167,7 +201,11 @@ public final class Constants {
             Limelight4Constants.horPixles,
             visionMeasurementStdDevs);
 
+<<<<<<< Updated upstream
     public static final String ip = "10.1.77.11";
+=======
+    public static final String ip = "10.1.77.11"; // TODO: Change IP To Fit
+>>>>>>> Stashed changes
   }
 
   public static final class Limelight_BackRightConstants {
@@ -193,7 +231,11 @@ public final class Constants {
             Limelight4Constants.horPixles,
             visionMeasurementStdDevs);
 
+<<<<<<< Updated upstream
     public static final String ip = "10.1.77.11";
+=======
+    public static final String ip = "10.1.77.11"; // TODO: Change IP TO Fit
+>>>>>>> Stashed changes
   }
 
   public static final class ElevatorConstants {
@@ -213,10 +255,18 @@ public final class Constants {
   }
 
   public static final class FunnelConstants {
+<<<<<<< Updated upstream
     public static final int funnelMotorId = 31; // TODO: ADD PROPER ID
   }
 
   public static final class AlgaeRemoverConstants {
     public static final int algaeRemoverMotorId = 32; // TODO: ADD PROPER ID
+=======
+    public static final int funnelMotorId = 31;
+  }
+
+  public static final class AlgaeRemoverConstants {
+    public static final int algaeRemoverMotorId = 32;
+>>>>>>> Stashed changes
   }
 }

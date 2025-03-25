@@ -54,14 +54,14 @@ public class ElevatorIOReal implements ElevatorIO {
     motorConfig.Slot0.kI = 0;
     motorConfig.Slot0.kD = 0;
     motorConfig.Slot0.kS = 0;
-    motorConfig.Slot0.kG = 0;
+    motorConfig.Slot0.kG = 0.5;
 
     motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
     motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -80;
+    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -60;
 
-    // motorConfig.MotorOutput.PeakForwardDutyCycle = 0.3;
+    motorConfig.MotorOutput.PeakForwardDutyCycle = 0.3;
     /* Open and Closed Loop Ramping */
     motorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
     motorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.25;
@@ -78,11 +78,12 @@ public class ElevatorIOReal implements ElevatorIO {
     motorConfig.Slot0.kI = 0;
     motorConfig.Slot0.kD = 0;
     motorConfig.Slot0.kS = 0;
-    motorConfig.Slot0.kG = 0;
+    motorConfig.Slot0.kG = 0.5;
+    motorConfig.MotorOutput.PeakForwardDutyCycle = 0.3;
     motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
     motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -80;
+    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -60;
     motorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
     motorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.25;
     motorConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.0;
