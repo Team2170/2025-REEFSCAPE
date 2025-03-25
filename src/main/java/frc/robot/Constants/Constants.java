@@ -87,7 +87,7 @@ public final class Constants {
   }
 
   public static final class Limelight_FrontLeftConstants {
-    public static final String name = "limelight";
+    public static final String name = "limelight-fl";
     public static final VisionObservation.LLTYPE limelightType = LLTYPE.LL4;
     public static final double limelightMountHeight = Units.inchesToMeters(20.5);
     public static final int detectorPiplineIndex = 2;
@@ -113,7 +113,7 @@ public final class Constants {
   }
 
   public static final class Limelight_FrontRightConstants {
-    public static final String name = "limelight";
+    public static final String name = "limelight-fr";
     public static final VisionObservation.LLTYPE limelightType = LLTYPE.LL4;
     public static final double limelightMountHeight = Units.inchesToMeters(20.5);
     public static final int detectorPiplineIndex = 2;
@@ -139,7 +139,7 @@ public final class Constants {
   }
 
   public static final class Limelight_BackCenterConstants {
-    public static final String name = "limelight";
+    public static final String name = "limelight-bkcenter";
     public static final VisionObservation.LLTYPE limelightType = LLTYPE.LL3;
     public static final double limelightMountHeight = Units.inchesToMeters(20.5);
     public static final int detectorPiplineIndex = 2;
@@ -165,7 +165,7 @@ public final class Constants {
   }
 
   public static final class Limelight_BackLeftConstants {
-    public static final String name = "limelight";
+    public static final String name = "limelight-bkleft";
     public static final VisionObservation.LLTYPE limelightType = LLTYPE.LL2;
     public static final double limelightMountHeight = Units.inchesToMeters(20.5);
     public static final int detectorPiplineIndex = 2;
@@ -191,7 +191,7 @@ public final class Constants {
   }
 
   public static final class Limelight_BackRightConstants {
-    public static final String name = "limelight";
+    public static final String name = "limelight-bkright";
     public static final VisionObservation.LLTYPE limelightType = LLTYPE.LL2;
     public static final double limelightMountHeight = Units.inchesToMeters(20.5);
     public static final int detectorPiplineIndex = 2;
@@ -213,7 +213,7 @@ public final class Constants {
             Limelight4Constants.horPixles,
             visionMeasurementStdDevs);
 
-    public static final String ip = "10.21.70.16"; // TODO: Change IP TO Fit
+    public static final String ip = "10.21.70.15"; // TODO: Change IP TO Fit
   }
 
   public static final class ElevatorConstants {
