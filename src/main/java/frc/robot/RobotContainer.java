@@ -27,6 +27,11 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.Constants;
+import frc.robot.Constants.Constants.Limelight_BackCenterConstants;
+import frc.robot.Constants.Constants.Limelight_BackLeftConstants;
+import frc.robot.Constants.Constants.Limelight_BackRightConstants;
+import frc.robot.Constants.Constants.Limelight_FrontLeftConstants;
+import frc.robot.Constants.Constants.Limelight_FrontRightConstants;
 import frc.robot.Controller.CommandReyannController;
 import frc.robot.Subsystems.AlgaeRemover.AlgaeRemover;
 import frc.robot.Subsystems.AlgaeRemover.Components.AlgaeRemoverIOReal;
@@ -45,6 +50,10 @@ import frc.robot.Subsystems.drive.GyroIOPigeon2;
 import frc.robot.Subsystems.drive.ModuleIO;
 import frc.robot.Subsystems.drive.ModuleIOSim;
 import frc.robot.Subsystems.drive.ModuleIOTalonFX;
+import frc.robot.Subsystems.vision.Vision;
+import frc.robot.Subsystems.vision.VisionIO;
+import frc.robot.Subsystems.vision.VisionIOLimelight;
+import frc.robot.commands.AlignOnReef;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -63,11 +72,12 @@ public class RobotContainer {
   private final Climber climber;
   private final Funnel funnel;
   private final AlgaeRemover algaeRemover;
-  //   private final Vision limelight_frontleft;
-  //   private final Vision limelight_frontright;
-  //   private final Vision limelight_backleft;
-  //   private final Vision limelight_backcenter;
-  //   private final Vision limelight_backright;
+//   private final AlignOnReef aligner;
+    private final Vision limelight_frontleft;
+    private final Vision limelight_frontright;
+    private final Vision limelight_backleft;
+    // private final Vision limelight_backcenter;
+    private final Vision limelight_backright;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -92,16 +102,16 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        // limelight_frontleft =
-        //     new Vision(drive, new VisionIOLimelight(Limelight_FrontLeftConstants.constants));
-        // limelight_frontright =
-        //     new Vision(drive, new VisionIOLimelight(Limelight_FrontRightConstants.constants));
+        limelight_frontleft =
+            new Vision(drive, new VisionIOLimelight(Limelight_FrontLeftConstants.constants));
+        limelight_frontright =
+            new Vision(drive, new VisionIOLimelight(Limelight_FrontRightConstants.constants));
         // limelight_backcenter =
         //     new Vision(drive, new VisionIOLimelight(Limelight_BackCenterConstants.constants));
-        // limelight_backleft =
-        //     new Vision(drive, new VisionIOLimelight(Limelight_BackLeftConstants.constants));
-        // limelight_backright =
-        //     new Vision(drive, new VisionIOLimelight(Limelight_BackRightConstants.constants));
+        limelight_backleft =
+            new Vision(drive, new VisionIOLimelight(Limelight_BackLeftConstants.constants));
+        limelight_backright =
+            new Vision(drive, new VisionIOLimelight(Limelight_BackRightConstants.constants));
         break;
 
       case SIM:
@@ -113,11 +123,11 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        // limelight_frontleft = new Vision(drive, new VisionIO() {});
-        // limelight_frontright = new Vision(drive, new VisionIO() {});
+        limelight_frontleft = new Vision(drive, new VisionIO() {});
+        limelight_frontright = new Vision(drive, new VisionIO() {});
         // limelight_backcenter = new Vision(drive, new VisionIO() {});
-        // limelight_backleft = new Vision(drive, new VisionIO() {});
-        // limelight_backright = new Vision(drive, new VisionIO() {});
+        limelight_backleft = new Vision(drive, new VisionIO() {});
+        limelight_backright = new Vision(drive, new VisionIO() {});
         break;
 
       default:
@@ -130,11 +140,11 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        // limelight_frontleft = new Vision(drive, new VisionIO() {});
-        // limelight_frontright = new Vision(drive, new VisionIO() {});
+        limelight_frontleft = new Vision(drive, new VisionIO() {});
+        limelight_frontright = new Vision(drive, new VisionIO() {});
         // limelight_backcenter = new Vision(drive, new VisionIO() {});
-        // limelight_backleft = new Vision(drive, new VisionIO() {});
-        // limelight_backright = new Vision(drive, new VisionIO() {});
+        limelight_backleft = new Vision(drive, new VisionIO() {});
+        limelight_backright = new Vision(drive, new VisionIO() {});
         // NamedCommands.registerCommand("flipGyro", new InstantCommand(() -> drive.getPose()));
         // KYLE WAS HERE
 
@@ -178,6 +188,20 @@ public class RobotContainer {
     climber = new Climber("climber", new ClimberIOReal());
     funnel = new Funnel("Funnel", new FunnelIOReal());
     algaeRemover = new AlgaeRemover("AlgaeRemover", new AlgaeRemoverIOReal());
+    // aligner = new AlignOnReef(drive,
+    //  () -> drive.getPose().getX(),
+    //   () -> drive.getPose().getY(), //TODO: Check if GetRadians is the right type
+    //   () -> drive.getRotation().getRadians(), null, null);
+      
+    //Code copied from Alex's old code
+    controller.x().whileTrue(
+        new AlignOnReef(
+                        drive,
+                        () -> controller.getLeftX(),
+                        () ->controller.getLeftY(),
+                        () -> controller.getRightX(),
+                        () -> controller.povRight().getAsBoolean(),
+                        () -> controller.povRight().getAsBoolean()));
 
     buttonBoard = new CommandReyannController(2);
 
@@ -231,6 +255,8 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
+
+    
     Command holdElevatorPosition = new InstantCommand(() -> elevator.hold(-elevator.HOLD_OUTPUT));
     operator
         .leftBumper()
