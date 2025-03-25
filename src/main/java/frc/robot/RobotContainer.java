@@ -226,7 +226,7 @@ public class RobotContainer {
             () -> controller.getLeftTriggerAxis(),
             () -> controller.getRightTriggerAxis(),
             () -> -controller.getRightX(),
-            controller.a()));
+            controller.b()));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
