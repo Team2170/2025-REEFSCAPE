@@ -223,13 +223,23 @@ public class RobotContainer {
             drive,
             () -> controller.getLeftY(),
             () -> controller.getLeftX(),
-            () -> controller.getLeftTriggerAxis(),
-            () -> controller.getRightTriggerAxis(),
+            () -> controller.leftTrigger(0.25).getAsBoolean(),
             () -> -controller.getRightX(),
             controller.b()));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    controller
+        .rightTrigger(0.25)
+        .whileTrue(
+            DriveCommands.driveToReef(
+                drive,
+                () -> controller.getLeftY(),
+                () -> controller.getLeftX(),
+                () -> controller.getRightX(),
+                controller.povRight(),
+                controller.povLeft()));
 
     // Reset gyro to 0° when B button is pressed
     controller

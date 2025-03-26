@@ -61,21 +61,24 @@ public class DriveCommands {
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      DoubleSupplier translationModifier,
-      DoubleSupplier rotationModifier,
+      BooleanSupplier speedLimiter,
       DoubleSupplier omegaSupplier,
       BooleanSupplier robotCentric) {
     return Commands.run(
         () -> {
           // Get linear velocity
-          double tranLimit = (1 - translationModifier.getAsDouble());
+
+          double tranLimit = 1;
+          double omegaLimit = 1;
+          if (speedLimiter.getAsBoolean()) {
+            tranLimit = 0.25;
+            omegaLimit = 0.25;
+          }
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(
                   xSupplier.getAsDouble() * tranLimit, ySupplier.getAsDouble() * tranLimit);
 
           // Apply rotation deadband
-
-          double omegaLimit = (1 - rotationModifier.getAsDouble());
           double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble() * omegaLimit, DEADBAND);
 
           // Square rotation value for more precise control
