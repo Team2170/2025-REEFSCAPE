@@ -235,7 +235,7 @@ public class RobotContainer {
         .whileTrue(
             DriveCommands.driveToReef(
                 drive,
-                () -> controller.getLeftY(),
+                () -> -controller.getLeftY(),
                 () -> controller.getLeftX(),
                 () -> controller.getRightX(),
                 controller.povRight(),
