@@ -109,6 +109,7 @@ public class ElevatorIOReal implements ElevatorIO {
 
   public void updateInputs(ElevatorIOInputs inputs) {
     inputs.state = desiredState;
+    inputs.targetRotations = desiredState.pos.getRotations();
     // Left Logging Values
     inputs.leftTorqueCurrentAmps = leftMotor.getTorqueCurrent().getValueAsDouble();
     inputs.leftPositionRotations =
@@ -149,5 +150,36 @@ public class ElevatorIOReal implements ElevatorIO {
 
   public void hold(double hold) {
     setPercentOutput(hold);
+  }
+
+  public boolean reachedSetpoint(ElevatorState state) {
+    double threshold = Rotation2d.fromRotations(1).getRotations();
+    double leftRotations =
+        absRotation2d(
+                Rotation2d.fromRotations(
+                    mLeftEncoder.getPosition().getValueAsDouble() - leftOffset))
+            .getRotations();
+    double rightRotations =
+        absRotation2d(
+                Rotation2d.fromRotations(
+                    mRightEncoder.getPosition().getValueAsDouble() - rightOffset))
+            .getRotations();
+    double targetRotations = absRotation2d(state.pos).getRotations();
+    if (isWithinThreshold(leftRotations, targetRotations, threshold)) {
+      return true;
+    }
+    if (isWithinThreshold(rightRotations, targetRotations, threshold)) {
+      return true;
+    }
+    return false;
+  }
+
+  public Rotation2d absRotation2d(Rotation2d rot) {
+    Rotation2d absRot = Rotation2d.fromRotations(Math.abs(rot.getRotations()));
+    return absRot;
+  }
+
+  public boolean isWithinThreshold(double value, double target, double threshold) {
+    return Math.abs(value - target) <= threshold;
   }
 }

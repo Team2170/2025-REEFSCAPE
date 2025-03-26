@@ -25,20 +25,28 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.Constants;
 import frc.robot.Constants.Constants.Limelight_FrontLeftConstants;
 import frc.robot.Constants.Constants.Limelight_FrontRightConstants;
 import frc.robot.Controller.CommandReyannController;
 import frc.robot.Subsystems.AlgaeRemover.AlgaeRemover;
+import frc.robot.Subsystems.AlgaeRemover.Components.AlgaeRemoverIO;
 import frc.robot.Subsystems.AlgaeRemover.Components.AlgaeRemoverIOReal;
 import frc.robot.Subsystems.Climber.Climber;
+import frc.robot.Subsystems.Climber.Components.ClimberIO;
 import frc.robot.Subsystems.Climber.Components.ClimberIOReal;
+import frc.robot.Subsystems.CoralGrabber.Components.CoralGrabberIO;
 import frc.robot.Subsystems.CoralGrabber.Components.CoralGrabberIOReal;
+import frc.robot.Subsystems.CoralGrabber.Components.CoralGrabberIOSim;
 import frc.robot.Subsystems.CoralGrabber.CoralGrabber;
+import frc.robot.Subsystems.Elevator.Components.ElevatorIO;
 import frc.robot.Subsystems.Elevator.Components.ElevatorIOReal;
+import frc.robot.Subsystems.Elevator.Components.ElevatorIOSim;
 import frc.robot.Subsystems.Elevator.Elevator;
 import frc.robot.Subsystems.Elevator.Utility.ElevatorState;
+import frc.robot.Subsystems.Funnel.Components.FunnelIO;
 import frc.robot.Subsystems.Funnel.Components.FunnelIOReal;
 import frc.robot.Subsystems.Funnel.Funnel;
 import frc.robot.Subsystems.drive.Drive;
@@ -52,6 +60,7 @@ import frc.robot.Subsystems.vision.VisionIO;
 import frc.robot.Subsystems.vision.VisionIOLimelight;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -86,6 +95,10 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    operator = new CommandXboxController(1);
+    buttonBoard = new CommandReyannController(2);
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -110,6 +123,21 @@ public class RobotContainer {
         // limelight_backright =
         // new Vision(drive, new
         // VisionIOLimelight(Limelight_BackRightConstants.constants));
+        elevator =
+            new Elevator(
+                new ElevatorIOReal(
+                    Constants.ElevatorConstants.elevatorMasterId,
+                    Constants.ElevatorConstants.elevatorFollowerId,
+                    Constants.ElevatorConstants.canbus,
+                    Constants.ElevatorConstants.elevatorMasterCancoderId));
+        shooter =
+            new CoralGrabber(
+                "Shooter",
+                new CoralGrabberIOReal(
+                    Constants.CoralGrabberConstants.coralGrabberMotorId, "rio", "rio"));
+        climber = new Climber("climber", new ClimberIOReal());
+        funnel = new Funnel("Funnel", new FunnelIOReal());
+        algaeRemover = new AlgaeRemover("AlgaeRemover", new AlgaeRemoverIOReal());
         break;
 
       case SIM:
@@ -126,6 +154,20 @@ public class RobotContainer {
         // limelight_backcenter = new Vision(drive, new VisionIO() {});
         // limelight_backleft = new Vision(drive, new VisionIO() {});
         // limelight_backright = new Vision(drive, new VisionIO() {});
+        elevator =
+            new Elevator(
+                new ElevatorIOSim(
+                    Constants.ElevatorConstants.elevatorMasterId,
+                    Constants.ElevatorConstants.elevatorFollowerId,
+                    Constants.ElevatorConstants.canbus,
+                    Constants.ElevatorConstants.elevatorMasterCancoderId));
+        shooter =
+            new CoralGrabber(
+                "Shooter",
+                new CoralGrabberIOSim(Constants.CoralGrabberConstants.coralGrabberMotorId, "rio"));
+        climber = new Climber("climber", new ClimberIO() {});
+        funnel = new Funnel("Funnel", new FunnelIO() {});
+        algaeRemover = new AlgaeRemover("AlgaeRemover", new AlgaeRemoverIO() {});
         break;
 
       default:
@@ -145,8 +187,12 @@ public class RobotContainer {
         // limelight_backright = new Vision(drive, new VisionIO() {});
         // NamedCommands.registerCommand("flipGyro", new InstantCommand(() ->
         // drive.getPose()));
-        // KYLE WAS HERE
 
+        elevator = new Elevator(new ElevatorIO() {});
+        shooter = new CoralGrabber("Shooter", new CoralGrabberIO() {});
+        climber = new Climber("climber", new ClimberIO() {});
+        funnel = new Funnel("Funnel", new FunnelIO() {});
+        algaeRemover = new AlgaeRemover("AlgaeRemover", new AlgaeRemoverIO() {});
         break;
     }
 
@@ -173,25 +219,6 @@ public class RobotContainer {
     // "Drive SysId (Dynamic Reverse)",
     // drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    elevator =
-        new Elevator(
-            new ElevatorIOReal(
-                Constants.ElevatorConstants.elevatorMasterId,
-                Constants.ElevatorConstants.elevatorFollowerId,
-                Constants.ElevatorConstants.canbus,
-                Constants.ElevatorConstants.elevatorMasterCancoderId));
-    shooter =
-        new CoralGrabber(
-            "Shooter",
-            new CoralGrabberIOReal(
-                Constants.CoralGrabberConstants.coralGrabberMotorId, "rio", "rio"));
-    operator = new CommandXboxController(1);
-    climber = new Climber("climber", new ClimberIOReal());
-    funnel = new Funnel("Funnel", new FunnelIOReal());
-    algaeRemover = new AlgaeRemover("AlgaeRemover", new AlgaeRemoverIOReal());
-
-    buttonBoard = new CommandReyannController(2);
-
     NamedCommands.registerCommand(
         "elevate",
         new RepeatCommand(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L2)))
@@ -208,6 +235,10 @@ public class RobotContainer {
     limelight_frontleft.periodic();
     limelight_frontright.periodic();
     elevator.periodic();
+  }
+
+  public void outputState(String stateName) {
+    Logger.recordOutput("Robot/Action", stateName);
   }
 
   /**
@@ -281,42 +312,51 @@ public class RobotContainer {
         .whileTrue(new InstantCommand(() -> climber.setPercentOut(-0.25)))
         .onFalse(new InstantCommand(() -> climber.setPercentOut(0)));
 
-    // operator.povLeft().onTrue(new InstantCommand(() ->
-    // elevator.setState(ElevatorState.CORAL_L2)));
-    // .onFalse(new InstantCommand(() -> elevator.stop()));
-
     Command stop = new InstantCommand(() -> elevator.stop());
+    Command SetpointReached = new RunCommand(() -> elevator.setState(ElevatorState.CORAL_L1));
     Command ScoreLevelOne =
         new SequentialCommandGroup(
-            new RunCommand(() -> elevator.setState(ElevatorState.CORAL_L1)).withTimeout(0.30),
-            new RunCommand(() -> shooter.setIntakeSpeed(-0.12)).withTimeout(1.5),
+            new RunCommand(() -> elevator.setState(ElevatorState.CORAL_L1))
+                .alongWith(new InstantCommand(() -> outputState("ElevatorUp")))
+                .until(() -> elevator.reachedSetpoint(ElevatorState.CORAL_L1)),
+            new RunCommand(() -> shooter.setIntakeSpeed(-0.12))
+                .withTimeout(1.5)
+                .alongWith(new InstantCommand(() -> outputState("ShooterOutake"))),
             new InstantCommand(() -> shooter.setIntakeSpeed(0)),
-            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN)).withTimeout(0.75),
+            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN))
+                .alongWith(new InstantCommand(() -> outputState("ElevatorDown")))
+                .until(() -> elevator.reachedSetpoint(ElevatorState.UNKNOWN)),
             new InstantCommand(() -> elevator.stop()));
     Command ScoreLevelTwo =
         new SequentialCommandGroup(
-            new RunCommand(() -> elevator.setState(ElevatorState.CORAL_L2)).withTimeout(0.4),
-            new RunCommand(() -> shooter.setIntakeSpeed(-0.30)).withTimeout(1.5),
+            new RunCommand(() -> elevator.setState(ElevatorState.CORAL_L2))
+                .alongWith(new InstantCommand(() -> outputState("ElevatorUp")))
+                .until(() -> elevator.reachedSetpoint(ElevatorState.CORAL_L2)),
+            new RunCommand(() -> shooter.setIntakeSpeed(-0.30))
+                .withTimeout(1.5)
+                .alongWith(new InstantCommand(() -> outputState("ShooterOutake"))),
             new InstantCommand(() -> shooter.setIntakeSpeed(0)),
-            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN)).withTimeout(0.8),
+            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN))
+                .alongWith(new InstantCommand(() -> outputState("ElevatorDown")))
+                .until(() -> elevator.reachedSetpoint(ElevatorState.UNKNOWN)),
             new InstantCommand(() -> elevator.stop()));
     Command ScoreLevelThree =
         new SequentialCommandGroup(
-            new RunCommand(() -> elevator.setState(ElevatorState.CORAL_L3)).withTimeout(0.75),
-            new RunCommand(() -> shooter.setIntakeSpeed(-0.30)).withTimeout(1.5),
+            new RunCommand(() -> elevator.setState(ElevatorState.CORAL_L3))
+                .alongWith(new InstantCommand(() -> outputState("ElevatorUp")))
+                .until(() -> elevator.reachedSetpoint(ElevatorState.CORAL_L3)),
+            new RunCommand(() -> shooter.setIntakeSpeed(-0.30))
+                .withTimeout(1.5)
+                .alongWith(new InstantCommand(() -> outputState("ShooterOutake"))),
             new InstantCommand(() -> shooter.setIntakeSpeed(0)),
-            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN)).withTimeout(1.75),
+            new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN))
+                .alongWith(new InstantCommand(() -> outputState("ElevatorDown")))
+                .until(() -> elevator.reachedSetpoint(ElevatorState.UNKNOWN)),
             new InstantCommand(() -> elevator.stop()));
 
     buttonBoard.L1().onTrue(ScoreLevelOne);
     buttonBoard.L2().onTrue(ScoreLevelTwo);
     buttonBoard.L3().onTrue(ScoreLevelThree);
-    // .onFalse(new InstantCommand(() -> elevator.stop()));
-
-    // buttonBoard
-    // .L4()
-    // .onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.CORAL_L4)))
-    // .onFalse(new InstantCommand(() -> elevator.stop()));
 
     operator
         .povUp()
@@ -339,6 +379,15 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> algaeRemover.stop()));
 
     // controller.y().onTrue(new InstantCommand(() -> drive.flipGyro()));
+
+    // Simulation with keyboard only!!!!
+    new CommandJoystick(2)
+        .button(5)
+        .onTrue(new InstantCommand(() -> elevator.setState(ElevatorState.UNKNOWN)))
+        .onFalse(holdElevatorPosition);
+    new CommandJoystick(2).button(1).onTrue(ScoreLevelOne);
+    new CommandJoystick(2).button(2).onTrue(ScoreLevelTwo);
+    new CommandJoystick(2).button(3).onTrue(ScoreLevelThree);
   }
 
   /**

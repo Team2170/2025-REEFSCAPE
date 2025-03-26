@@ -65,4 +65,8 @@ public class Elevator extends SubsystemBase {
   public void hold(double hold) {
     io.hold(hold);
   }
+
+  public boolean reachedSetpoint(ElevatorState state) {
+    return io.reachedSetpoint(state);
+  }
 }
