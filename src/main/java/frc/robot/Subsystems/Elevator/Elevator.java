@@ -69,4 +69,8 @@ public class Elevator extends SubsystemBase {
   public boolean reachedSetpoint(ElevatorState state) {
     return io.reachedSetpoint(state);
   }
+
+  public void resetElevatorPosition() {
+    io.resetElevatorPosition();
+  }
 }

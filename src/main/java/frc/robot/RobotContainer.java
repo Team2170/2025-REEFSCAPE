@@ -261,16 +261,16 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    controller
-        .rightTrigger(0.25)
-        .whileTrue(
-            DriveCommands.driveToReef(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> controller.getLeftX(),
-                () -> controller.getRightX(),
-                controller.povRight(),
-                controller.povLeft()));
+    // controller
+    //     .rightTrigger(0.25)
+    //     .whileTrue(
+    //         DriveCommands.driveToReef(
+    //             drive,
+    //             () -> controller.getLeftY(),
+    //             () -> controller.getLeftX(),
+    //             () -> -controller.getRightX(),
+    //             controller.povRight(),
+    //             controller.povLeft()));
 
     // Reset gyro to 0° when B button is pressed
     controller
@@ -318,46 +318,53 @@ public class RobotContainer {
         new SequentialCommandGroup(
             new RunCommand(() -> elevator.setState(ElevatorState.CORAL_L1))
                 .alongWith(new InstantCommand(() -> outputState("ElevatorUp")))
-                .until(() -> elevator.reachedSetpoint(ElevatorState.CORAL_L1)),
+                .until(() -> elevator.reachedSetpoint(ElevatorState.CORAL_L1))
+                .withTimeout(0.75),
             new RunCommand(() -> shooter.setIntakeSpeed(-0.12))
                 .withTimeout(1.5)
                 .alongWith(new InstantCommand(() -> outputState("ShooterOutake"))),
             new InstantCommand(() -> shooter.setIntakeSpeed(0)),
             new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN))
                 .alongWith(new InstantCommand(() -> outputState("ElevatorDown")))
-                .until(() -> elevator.reachedSetpoint(ElevatorState.UNKNOWN)),
+                .until(() -> elevator.reachedSetpoint(ElevatorState.UNKNOWN))
+                .withTimeout(0.75),
             new InstantCommand(() -> elevator.stop()));
     Command ScoreLevelTwo =
         new SequentialCommandGroup(
             new RunCommand(() -> elevator.setState(ElevatorState.CORAL_L2))
                 .alongWith(new InstantCommand(() -> outputState("ElevatorUp")))
-                .until(() -> elevator.reachedSetpoint(ElevatorState.CORAL_L2)),
+                .until(() -> elevator.reachedSetpoint(ElevatorState.CORAL_L2))
+                .withTimeout(0.9),
             new RunCommand(() -> shooter.setIntakeSpeed(-0.30))
                 .withTimeout(1.5)
                 .alongWith(new InstantCommand(() -> outputState("ShooterOutake"))),
             new InstantCommand(() -> shooter.setIntakeSpeed(0)),
             new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN))
                 .alongWith(new InstantCommand(() -> outputState("ElevatorDown")))
-                .until(() -> elevator.reachedSetpoint(ElevatorState.UNKNOWN)),
+                .until(() -> elevator.reachedSetpoint(ElevatorState.UNKNOWN))
+                .withTimeout(0.9),
             new InstantCommand(() -> elevator.stop()));
     Command ScoreLevelThree =
         new SequentialCommandGroup(
             new RunCommand(() -> elevator.setState(ElevatorState.CORAL_L3))
                 .alongWith(new InstantCommand(() -> outputState("ElevatorUp")))
-                .until(() -> elevator.reachedSetpoint(ElevatorState.CORAL_L3)),
+                .until(() -> elevator.reachedSetpoint(ElevatorState.CORAL_L3))
+                .withTimeout(1.75),
             new RunCommand(() -> shooter.setIntakeSpeed(-0.30))
                 .withTimeout(1.5)
                 .alongWith(new InstantCommand(() -> outputState("ShooterOutake"))),
             new InstantCommand(() -> shooter.setIntakeSpeed(0)),
             new RunCommand(() -> elevator.setState(ElevatorState.UNKNOWN))
                 .alongWith(new InstantCommand(() -> outputState("ElevatorDown")))
-                .until(() -> elevator.reachedSetpoint(ElevatorState.UNKNOWN)),
+                .until(() -> elevator.reachedSetpoint(ElevatorState.UNKNOWN))
+                .withTimeout(1.75),
             new InstantCommand(() -> elevator.stop()));
 
     buttonBoard.L1().onTrue(ScoreLevelOne);
     buttonBoard.L2().onTrue(ScoreLevelTwo);
     buttonBoard.L3().onTrue(ScoreLevelThree);
 
+    operator.rightStick().onTrue(new InstantCommand(() -> elevator.resetElevatorPosition()));
     operator
         .povUp()
         .onTrue(new InstantCommand(() -> funnel.setPercentOut(0.1)))

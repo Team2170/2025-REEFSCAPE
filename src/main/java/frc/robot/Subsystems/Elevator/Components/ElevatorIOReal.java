@@ -59,7 +59,7 @@ public class ElevatorIOReal implements ElevatorIO {
     motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
     motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -60;
+    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -80;
 
     motorConfig.MotorOutput.PeakForwardDutyCycle = 0.3;
     /* Open and Closed Loop Ramping */
@@ -83,7 +83,7 @@ public class ElevatorIOReal implements ElevatorIO {
     motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
     motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -60;
+    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -80;
     motorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
     motorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.25;
     motorConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.0;
@@ -150,6 +150,11 @@ public class ElevatorIOReal implements ElevatorIO {
 
   public void hold(double hold) {
     setPercentOutput(hold);
+  }
+
+  public void resetElevatorPosition() {
+    leftMotor.setPosition(0);
+    rightMotor.setPosition(0);
   }
 
   public boolean reachedSetpoint(ElevatorState state) {

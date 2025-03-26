@@ -42,7 +42,9 @@ public interface ElevatorIO {
     return 0.0;
   }
 
-  public default boolean reachedSetpoint(ElevatorState state){
+  public default boolean reachedSetpoint(ElevatorState state) {
     return false;
   }
+
+  public default void resetElevatorPosition() {}
 }
